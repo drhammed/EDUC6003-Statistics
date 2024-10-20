@@ -1,0 +1,30 @@
+[
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "Welcome to EDUC 6003 Advanced Statistics. This website will be used for all the tutorials of this course. We will be using R/RStudio throughout the semester. However, anyone interested in using Python should feel free to do so (and I’m happy to chat about that). If you’re very new to R for statistical analysis and would like a quick intro, please refer to this website R Workshop for Statistical Analysis.\nIn fact, this website was built entirely using R!"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "EDUC 6003 Advanced Statistics",
+    "section": "",
+    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org."
+  },
+  {
+    "objectID": "index.html#quarto",
+    "href": "index.html#quarto",
+    "title": "EDUC 6003 Advanced Statistics",
+    "section": "",
+    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org."
+  },
+  {
+    "objectID": "index.html#running-code",
+    "href": "index.html#running-code",
+    "title": "EDUC 6003 Advanced Statistics",
+    "section": "Running Code",
+    "text": "Running Code\nWhen you click the Render button a document will be generated that includes both content and the output of embedded code. You can embed code like this:\n\n1 + 1\n\n[1] 2\n\n\nYou can add options to executable code like this\n\n\n[1] 4\n\n\nThe echo: false option disables the printing of code (only output is displayed)."
+  }
+]
