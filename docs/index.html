@@ -21,6 +21,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -153,6 +187,13 @@ window.Quarto = {
   <li><a href="#coefficient-alpha-cronbachs-alpha" id="toc-coefficient-alpha-cronbachs-alpha" class="nav-link" data-scroll-target="#coefficient-alpha-cronbachs-alpha">Coefficient Alpha (Cronbach’s Alpha)</a></li>
   <li><a href="#coefficient-omega" id="toc-coefficient-omega" class="nav-link" data-scroll-target="#coefficient-omega">Coefficient Omega</a></li>
   </ul></li>
+  <li><a href="#calculations-in-r" id="toc-calculations-in-r" class="nav-link" data-scroll-target="#calculations-in-r">Calculations in R</a></li>
+  <li><a href="#simulating-dataset" id="toc-simulating-dataset" class="nav-link" data-scroll-target="#simulating-dataset">Simulating dataset</a></li>
+  <li><a href="#calculating-cronbachs-alpha" id="toc-calculating-cronbachs-alpha" class="nav-link" data-scroll-target="#calculating-cronbachs-alpha">Calculating Cronbach’s Alpha</a>
+  <ul class="collapse">
+  <li><a href="#a.-we-can-use-the-psych-package-in-r" id="toc-a.-we-can-use-the-psych-package-in-r" class="nav-link" data-scroll-target="#a.-we-can-use-the-psych-package-in-r">a. We can use the psych Package in R</a></li>
+  <li><a href="#b.-visualizing-cronbachs-alpha" id="toc-b.-visualizing-cronbachs-alpha" class="nav-link" data-scroll-target="#b.-visualizing-cronbachs-alpha">b. Visualizing Cronbach’s Alpha</a></li>
+  </ul></li>
   </ul></li>
   </ul>
 </nav>
@@ -267,9 +308,158 @@ window.Quarto = {
 <p><em>Factor Structure Incorporation</em>: Utilizes confirmatory factor analysis (CFA) to model the underlying structure.</p>
 <p><em>Less Sensitive to Tau Equivalence Violations</em>: Provides more accurate reliability estimates when tau equivalence is not met.</p>
 <p><em>Applicability to Multidimensional Scales</em>: Suitable for tests measuring multiple constructs.</p>
-
-
 </section>
+</section>
+</section>
+<section id="calculations-in-r" class="level2">
+<h2 class="anchored" data-anchor-id="calculations-in-r">Calculations in R</h2>
+<p>Here, I will walk through the step-by-step process of calculating Cronbach’s Alpha and Coefficient Omega using R. We’ll use simulated data so it’s easy to follow along (of course, you can apply these techniques to your own datasets).</p>
+<p>Before we start, we need to install (and load) the necessary packages.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install packages if not already installed (uncomment the code to run it)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages(c("psych", "lavaan", "semTools", "tidyverse"))</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Now, you can load the libraries</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">#library(psych)</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">#library(lavaan)</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">#library(semTools)</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">#library(tidyverse)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Alternatively,</p>
+<p>You could use the “pacman” package to easily install and load the packages above</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#pacman::p_load(psych,lavaan,semTools,tidyverse)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="simulating-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="simulating-dataset">Simulating dataset</h2>
+<p>Let’s simulate a unidimensional dataset representing responses to a psychological test with 10 items. Each item is assumed to load on a single underlying factor (the construct being measured).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">999</span>) <span class="co">#for reproducibility</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Number of participants</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">200</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Number of items</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate factor loadings</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>lambda <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fl">0.7</span>, k)  <span class="co"># Equal loadings for simplicity</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate latent trait scores (true scores)</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>latent_trait <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate item responses with measurement error</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Assuming unique variance (theta) = 1 - lambda^2</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> lambda<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate item responses</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>item_responses <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, <span class="at">nrow =</span> n, <span class="at">ncol =</span> k)</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>k){</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  item_responses[,i] <span class="ot">&lt;-</span> lambda[i] <span class="sc">*</span> latent_trait <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="fu">sqrt</span>(theta[i]))</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to data frame and name the items</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>test_data <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(item_responses)</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(test_data) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"Item"</span>, <span class="dv">1</span><span class="sc">:</span>k)</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="co">#print the first few rows</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(test_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       Item1      Item2      Item3      Item4      Item5       Item6
+1 -1.2556963  0.1350372  0.3267107 -0.4350214 -0.2341561 -0.55481802
+2  0.1676193 -0.5108128 -2.0763683 -2.3273491  0.6263964 -1.18749601
+3  0.8438537  0.6766952  0.7511039  0.7876390 -0.2862397  0.72385660
+4  0.5239119  0.5615599 -0.5887199 -0.6589739  0.8637441  0.96640344
+5  0.4627802 -0.5181453 -0.5907776 -0.2237230  0.4472270  0.39956550
+6  0.1496605 -0.4830604 -0.4002617 -0.6658249 -1.7279389 -0.05426333
+        Item7      Item8      Item9      Item10
+1  0.12906041  0.8743370  0.8313717 -1.89803952
+2  0.03811422  0.3958650 -0.9320266 -1.19657498
+3  0.59847277  0.6243699  1.0944689 -0.34952191
+4  0.26035818  1.8831289  0.4292459 -1.18586145
+5  0.87674212  0.1055399 -0.9695509  0.04756092
+6 -0.58928130 -0.1575603 -1.7274886 -1.21579287</code></pre>
+</div>
+</div>
+<p>As you can see, we have created a dataset (test_data) with 200 participants and 10 items. Each item response is a combination of the latent trait (latent_trait) and random measurement error. The items are designed to load equally on the latent trait for simplicity.</p>
+</section>
+<section id="calculating-cronbachs-alpha" class="level2">
+<h2 class="anchored" data-anchor-id="calculating-cronbachs-alpha">Calculating Cronbach’s Alpha</h2>
+<p>Recall that Cronbach’s Alpha (α) is a measure of internal consistency that measures how closely related a set of items are as a group.</p>
+<section id="a.-we-can-use-the-psych-package-in-r" class="level3">
+<h3 class="anchored" data-anchor-id="a.-we-can-use-the-psych-package-in-r">a. We can use the psych Package in R</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>alpha_result <span class="ot">&lt;-</span> psych<span class="sc">::</span><span class="fu">alpha</span>(test_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Number of categories should be increased  in order to count frequencies. </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(alpha_result)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Reliability analysis   
+Call: psych::alpha(x = test_data)
+
+  raw_alpha std.alpha G6(smc) average_r S/N   ase   mean   sd median_r
+      0.88      0.88    0.87      0.42 7.3 0.013 -0.062 0.66     0.42
+
+    95% confidence boundaries 
+         lower alpha upper
+Feldt     0.85  0.88   0.9
+Duhachek  0.85  0.88   0.9
+
+ Reliability if an item is dropped:
+       raw_alpha std.alpha G6(smc) average_r S/N alpha se  var.r med.r
+Item1       0.87      0.87    0.86      0.42 6.6    0.014 0.0016  0.42
+Item2       0.87      0.87    0.86      0.42 6.5    0.014 0.0019  0.42
+Item3       0.86      0.87    0.85      0.42 6.4    0.014 0.0014  0.42
+Item4       0.86      0.87    0.85      0.42 6.4    0.014 0.0019  0.42
+Item5       0.87      0.87    0.86      0.42 6.5    0.014 0.0021  0.42
+Item6       0.87      0.87    0.86      0.42 6.5    0.014 0.0021  0.42
+Item7       0.87      0.87    0.86      0.43 6.9    0.013 0.0011  0.42
+Item8       0.87      0.87    0.86      0.42 6.5    0.014 0.0018  0.42
+Item9       0.86      0.86    0.85      0.41 6.4    0.014 0.0017  0.42
+Item10      0.87      0.87    0.86      0.42 6.6    0.014 0.0021  0.42
+
+ Item statistics 
+         n raw.r std.r r.cor r.drop   mean   sd
+Item1  200  0.67  0.67  0.62   0.58 -0.104 0.94
+Item2  200  0.70  0.70  0.66   0.62 -0.052 0.90
+Item3  200  0.71  0.71  0.68   0.63 -0.119 0.96
+Item4  200  0.72  0.71  0.68   0.63 -0.025 1.00
+Item5  200  0.70  0.69  0.65   0.61  0.035 0.96
+Item6  200  0.69  0.69  0.64   0.60 -0.051 0.96
+Item7  200  0.64  0.63  0.57   0.53 -0.021 0.99
+Item8  200  0.69  0.69  0.64   0.60 -0.043 0.93
+Item9  200  0.73  0.72  0.69   0.64 -0.094 0.98
+Item10 200  0.68  0.69  0.64   0.60 -0.150 0.90</code></pre>
+</div>
+</div>
+<p>Explanation:</p>
+<p>raw_alpha: The Cronbach’s Alpha coefficient.</p>
+<p>std.alpha: Standardized alpha, similar to raw_alpha.</p>
+<p>G6(smc): Generalizability theory estimate with squared multiple correlations.</p>
+<p>average_r: Average inter-item correlation.</p>
+<p>S/N: Signal-to-noise ratio.</p>
+<p>ase: Asymptotic standard error.</p>
+<p>Confidence Intervals: Lower and upper bounds for alpha.</p>
+<p>Interpretation:</p>
+<ul>
+<li><p>The Cronbach’s Alpha for our simulated data is 0.80, indicating acceptable internal consistency.</p></li>
+<li><p>The average inter-item correlation is 0.4, which is within the acceptable range for psychological scales.</p></li>
+</ul>
+</section>
+<section id="b.-visualizing-cronbachs-alpha" class="level3">
+<h3 class="anchored" data-anchor-id="b.-visualizing-cronbachs-alpha">b. Visualizing Cronbach’s Alpha</h3>
+<p>It’s helpful to visualize the internal consistency.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the Cronbach's Alpha result</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(alpha_result)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+
 </section>
 </section>
 </section>
