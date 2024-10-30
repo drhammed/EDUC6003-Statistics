@@ -21,40 +21,6 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
@@ -102,6 +68,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -147,8 +142,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#quarto" id="toc-quarto" class="nav-link active" data-scroll-target="#quarto">Quarto</a></li>
-  <li><a href="#running-code" id="toc-running-code" class="nav-link" data-scroll-target="#running-code">Running Code</a></li>
+  <li><a href="#chapter-1-" id="toc-chapter-1-" class="nav-link active" data-scroll-target="#chapter-1-">Chapter 1-</a>
+  <ul class="collapse">
+  <li><a href="#introduction-to-reliability-index-analysis" id="toc-introduction-to-reliability-index-analysis" class="nav-link" data-scroll-target="#introduction-to-reliability-index-analysis">Introduction to Reliability Index Analysis</a>
+  <ul class="collapse">
+  <li><a href="#what-is-reliability" id="toc-what-is-reliability" class="nav-link" data-scroll-target="#what-is-reliability">What is Reliability?</a></li>
+  </ul></li>
+  <li><a href="#classical-test-theory-ctt-and-coefficient-alpha" id="toc-classical-test-theory-ctt-and-coefficient-alpha" class="nav-link" data-scroll-target="#classical-test-theory-ctt-and-coefficient-alpha">Classical Test Theory (CTT) and Coefficient Alpha</a>
+  <ul class="collapse">
+  <li><a href="#coefficient-alpha-cronbachs-alpha" id="toc-coefficient-alpha-cronbachs-alpha" class="nav-link" data-scroll-target="#coefficient-alpha-cronbachs-alpha">Coefficient Alpha (Cronbach’s Alpha)</a></li>
+  <li><a href="#coefficient-omega" id="toc-coefficient-omega" class="nav-link" data-scroll-target="#coefficient-omega">Coefficient Omega</a></li>
+  </ul></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -180,28 +185,93 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="quarto" class="level2">
-<h2 class="anchored" data-anchor-id="quarto">Quarto</h2>
-<p>Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <a href="https://quarto.org" class="uri">https://quarto.org</a>.</p>
+<section id="chapter-1-" class="level1">
+<h1>Chapter 1-</h1>
+<section id="introduction-to-reliability-index-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="introduction-to-reliability-index-analysis">Introduction to Reliability Index Analysis</h2>
+<p>This tutorial will serve as a Guide to Enhanced Reliability Estimation with R</p>
+<section id="what-is-reliability" class="level3">
+<h3 class="anchored" data-anchor-id="what-is-reliability">What is Reliability?</h3>
+<p>Reliability refers to the consistency and precision of measurement instruments. In psychological testing, it assesses the extent to which a test produces stable and consistent results.</p>
+<section id="importance-of-reliability" class="level4">
+<h4 class="anchored" data-anchor-id="importance-of-reliability">Importance of Reliability</h4>
+<p><em>Measurement Precision</em>: Ensures that the scores accurately reflect the true attributes being measured.</p>
+<p><em>Research Validity</em>: High reliability is a prerequisite for valid conclusions and replicable research findings.</p>
+<p><em>Error Reduction</em>: Minimizes the impact of random errors, enhancing the clarity of observed relationships between constructs.</p>
 </section>
-<section id="running-code" class="level2">
-<h2 class="anchored" data-anchor-id="running-code">Running Code</h2>
-<p>When you click the <strong>Render</strong> button a document will be generated that includes both content and the output of embedded code. You can embed code like this:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 2</code></pre>
-</div>
-</div>
-<p>You can add options to executable code like this</p>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 4</code></pre>
-</div>
-</div>
-<p>The <code>echo: false</code> option disables the printing of code (only output is displayed).</p>
+<section id="types-of-reliability" class="level4">
+<h4 class="anchored" data-anchor-id="types-of-reliability">Types of Reliability</h4>
+<p><em>Internal Consistency</em>: Degree to which items within a test measure the same construct.</p>
+<p><em>Test-Retest Reliability</em>: Consistency of scores over time.</p>
+<p><em>Inter-Rater Reliability</em>: Agreement between different raters or observers.</p>
+</section>
+</section>
+</section>
+<section id="classical-test-theory-ctt-and-coefficient-alpha" class="level2">
+<h2 class="anchored" data-anchor-id="classical-test-theory-ctt-and-coefficient-alpha">Classical Test Theory (CTT) and Coefficient Alpha</h2>
+<p>Classical Test Theory Overview: CTT posits that each observed score is composed of a true score and an error score:</p>
+<p><span class="math display">\[ X = T + E \]</span></p>
+<p>where:</p>
+<p>𝑋= Observed score 𝑇= True score 𝐸= Error score</p>
+<section id="coefficient-alpha-cronbachs-alpha" class="level3">
+<h3 class="anchored" data-anchor-id="coefficient-alpha-cronbachs-alpha">Coefficient Alpha (Cronbach’s Alpha)</h3>
+<p>This is a widely used measure of internal consistency reliability within CTT. It estimates the extent to which items on a test measure the same underlying construct.</p>
+<p><span class="math display">\[
+\alpha = \frac{N}{N-1} \left(1 - \frac{\sum \sigma^2_{E}}{\sigma^2_{X}}\right)
+\]</span></p>
+<p>Where:</p>
+<p><span class="math inline">\(\alpha\)</span> = Cronbach’s Alpha</p>
+<p>𝑁 = Number of items in the test</p>
+<p><span class="math inline">\(\sigma^2_{E}\)</span> = Variance of the error scores</p>
+<p><span class="math inline">\(\sigma^2_{X}\)</span> = Variance of the observed total scores</p>
+<section id="assumptions-of-alpha" class="level4">
+<h4 class="anchored" data-anchor-id="assumptions-of-alpha">Assumptions of Alpha</h4>
+<p><em>Unidimensionality</em>: All items measure a single construct.</p>
+<p><em>Tau Equivalence</em>: Each item has the same true score variance.</p>
+<p><em>Independence of Errors</em>: Error terms are uncorrelated across items.</p>
+</section>
+<section id="limitations-of-alpha" class="level4">
+<h4 class="anchored" data-anchor-id="limitations-of-alpha">Limitations of Alpha</h4>
+<p><em>Sensitivity to Tau Equivalence</em>: Violations can lead to underestimation or overestimation of reliability.</p>
+<p><em>Assumes Unidimensionality</em>: Not suitable for multidimensional scales without adjustments.</p>
+<p><em>Ignores Factor Structure</em>: Does not account for the underlying factor model of the test.</p>
+</section>
+</section>
+<section id="coefficient-omega" class="level3">
+<h3 class="anchored" data-anchor-id="coefficient-omega">Coefficient Omega</h3>
+<p>Coefficient Omega is a more robust alternative to Cronbach’s Alpha, especially when the assumption of tau-equivalence (equal factor loadings) is violated. Omega takes into account the factor structure of the test, making it suitable for both unidimensional and multidimensional scales.</p>
+<section id="types-of-omega" class="level4">
+<h4 class="anchored" data-anchor-id="types-of-omega">Types of Omega</h4>
+<p><em>Omega Total (ωₜ</em>): Accounts for all common factors, both general and specific.</p>
+<p><em>Omega Hierarchical (ωₕ)</em>: Represents the proportion of variance attributable to a general factor alone.</p>
+<p>Omega Total is given by:</p>
+<p><span class="math display">\[
+\omega_t = \frac{\sum_{i=1}^{k} \lambda_i}{\sum_{i=1}^{k} \lambda_i + \sum_{i=1}^{k} \theta_i}
+\]</span></p>
+<p>Where:</p>
+<p><span class="math inline">\(\omega_t\)</span> = Omega Total</p>
+<p><span class="math inline">\(\lambda_i\)</span> = Factor loading for item</p>
+<p><span class="math inline">\(\theta_i\)</span> = Unique variance (error variance) for item</p>
+<p><span class="math inline">\(k\)</span> = Total number of items</p>
+<p>For a hierarchical model, Omega Hierarchical is:</p>
+<p><span class="math display">\[
+\omega_h = \frac{\lambda_g^2}{\lambda_g^2 + \sum_{i=1}^{k} \theta_i}
+\]</span></p>
+<p>where:</p>
+<p><span class="math inline">\(\omega_h\)</span> = Omega Hierarchical</p>
+<p><span class="math inline">\(\lambda_g\)</span> = Factor loading of the general factor</p>
+<p><span class="math inline">\(\theta_i\)</span> = Unique variance for item <span class="math inline">\(i\)</span></p>
+</section>
+<section id="advantages-of-omega-over-alpha" class="level4">
+<h4 class="anchored" data-anchor-id="advantages-of-omega-over-alpha">Advantages of Omega Over Alpha</h4>
+<p><em>Factor Structure Incorporation</em>: Utilizes confirmatory factor analysis (CFA) to model the underlying structure.</p>
+<p><em>Less Sensitive to Tau Equivalence Violations</em>: Provides more accurate reliability estimates when tau equivalence is not met.</p>
+<p><em>Applicability to Multidimensional Scales</em>: Suitable for tests measuring multiple constructs.</p>
 
 
+</section>
+</section>
+</section>
 </section>
 
 </main> <!-- /main -->
