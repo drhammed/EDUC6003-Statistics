@@ -178,66 +178,134 @@ You could use the "pacman" package to easily install and load the packages above
 ```
 
 
-## Simulating dataset
 
-Let's simulate a unidimensional dataset representing responses to a psychological test with 10 items. Each item is assumed to load on a single underlying factor (the construct being measured).
+## Loading the (BFI) dataset
+
+The Big Five Inventory (BFI) is a widely used dataset in personality psychology, measuring the five major dimensions of personality. We'll focus on the Openness trait for this tutorial.
 
 
 ```{r}
 
+# Load the psych package
+library(psych)
 
-set.seed(999) #for reproducibility
+# Load the BFI dataset
+data(bfi)
 
-# Number of participants
-n <- 200
+# load data file
+bfi <- bfi
+names(bfi)
 
-# Number of items
-k <- 10
+# View the structure of the dataset
+#str(bfi)
 
-# Simulate factor loadings
-lambda <- rep(0.7, k)  # Equal loadings for simplicity
 
-# Simulate latent trait scores (true scores)
-latent_trait <- rnorm(n, mean = 0, sd = 1)
-
-# Simulate item responses with measurement error
-# Assuming unique variance (theta) = 1 - lambda^2
-theta <- 1 - lambda^2
-
-# Generate item responses
-item_responses <- matrix(NA, nrow = n, ncol = k)
-for(i in 1:k){
-  item_responses[,i] <- lambda[i] * latent_trait + rnorm(n, mean = 0, sd = sqrt(theta[i]))
-}
-
-# Convert to data frame and name the items
-test_data <- as.data.frame(item_responses)
-colnames(test_data) <- paste0("Item", 1:k)
-
-#print the first few rows
-head(test_data)
 
 
 ```
 
 
+The dataset contains 2,800 participants with various demographic and personality-related variables. A1 to A5 correspond to items measuring the Openness trait.
 
-As you can see, we have created a dataset (test_data) with 200 participants and 10 items. Each item response is a combination of the latent trait (latent_trait) and random measurement error. The items are designed to load equally on the latent trait for simplicity.
+### Selecting Openness Items
 
+For this tutorial, we'll focus on five items measuring the Openness trait. These items are typically labeled as A1 to A5 in the BFI dataset.
+
+#### a. Extracting Openness Items
+
+```{r}
+
+library(tidyverse)
+
+# Select columns that contain "O" in their names and remove rows with NA values
+oppeness <- bfi %>%
+  select(matches("^O")) %>%
+  drop_na()
+
+head(oppeness)
+
+```
+
+
+Each A variable represents a Likert-type item measuring Openness. Responses range from 1 to 6, treated as continuous variables for analysis.
+
+
+### Handling Missing Data
+
+Before we continue, let's check any missing data.
+
+
+```{r}
+
+# Check for missing values
+sum(is.na(oppeness))
+
+
+```
+
+In this dataset, there are no missing values in the Openness items. If missing values were present, then we need to address that.
+
+
+We can remove the missing values like this. Note, since there's no missing values here, nothing to remove (but just letting you know).
+
+```{r}
+
+oppeness <- na.omit(oppeness)
+
+any(is.na(oppeness))
+
+```
 
 
 ## Calculating Cronbach's Alpha
 
 Recall that Cronbach's Alpha (α) is a measure of internal consistency that measures how closely related a set of items are as a group.
 
+
 ### a. We can use the psych Package in R
 
 ```{r}
 
-alpha_result <- psych::alpha(test_data)
+# Calculate Cronbach's Alpha using the psych package
+#alpha_result <- psych::alpha(oppeness)
 
+# Print the result
+#print(alpha_result)
+
+
+
+```
+
+
+Because some items were negatively correlated with the first principal component, we probably 
+should reverse them.  
+
+```{r}
+
+# Reversing item O2 and O5
+
+q <- c("O2","O5")
+reverse <- function(x){
+  x.reversed <- 7 +0 - x
+}
+
+oppeness[, c("O2R", "O5R")] <- reverse(oppeness[,c("O2","O5")])
+
+# compare original and reversed responses
+oppeness[1:6,]
+
+```
+
+Now, we can compute the alpha
+
+```{r}
+
+# compute alpha coefficient 
+
+alpha_result <- psych::alpha(oppeness[, -c(2,5)])
+
+# Print the result
 print(alpha_result)
-
 
 
 ```
@@ -260,28 +328,147 @@ ase: Asymptotic standard error.
 Confidence Intervals: Lower and upper bounds for alpha.
 
 
-
-
-Interpretation:
-
-- The Cronbach's Alpha for our simulated data is 0.80, indicating acceptable internal consistency.
-
-- The average inter-item correlation is 0.4, which is within the acceptable range for psychological scales.
+As we can see, the Cronbach's Alpha for the Openness items is 0.6, indicating strong internal consistency. The average inter-item correlation is 0.24, moderate and within psychological scales.
 
 
 
-### b. Visualizing Cronbach's Alpha
 
-It's helpful to visualize the internal consistency.
+
+## Confirmatory Factor Analysis (CFA)
+
+Confirmatory Factor Analysis (CFA) is used to verify the factor structure of a set of observed variables. In our case, we assume a unidimensional structure.
+
+### a. Specifying the CFA Model
+
+Let's specify a one-factor model where all items load on a single latent factor.
+
+```{r}
+
+# Specify model
+mod1f <- "
+openness =~ O1 + O2R + O3 + O4 + O5R
+"
+
+```
+
+
+### b. Fitting the CFA Model
+
+Fit the Model Using lavaan:
+
+```{r}
+library(lavaan)
+# Estimate model
+fit.one.f <- cfa(mod1f, data=oppeness, std.lv=T, missing='direct', 
+             estimator='MLR')
+
+# The results can be viewed using the summary
+
+summary(fit.one.f, fit.measures=T, standardized=T)
+
+
+
+```
+
+
+
+
+Explanation:
+
+Estimator: Maximum Likelihood (ML). 
+
+Test Statistics: The Chi-square test is significant (𝑝<0.001), indicating a poor fit.
+
+Fit Indices:
+
+CFI (0.94): above 0.90.
+
+TLI (0.88): Below the threshold of 0.90.
+
+RMSEA (0.068): Indicates relatively weak fit (≥0.05).
+
+SRMR (0.029): Great fit (≤0.08).
+
 
 
 ```{r}
 
-# Plot the Cronbach's Alpha result
-
-plot(alpha_result)
+residuals(fit.one.f, type='cor')
 
 ```
+
+
+The fit statistics reported under the Robust column in the summary indicate that this one-factor model has a marginal fit to the data; although the CFI of .94 suggests adequate fit, the TLI of .88 is lower than desired, and the RMSEA is somewhat high at 0.08.
+
+These estimates of 𝜆̂ vary substantially (from .36 to.79), suggesting that tau equivalence is not tenable for this openness test and thus that ωu is a more appropriate reliability estimate than alpha.6 The ωu estimate can be obtained by executing the reliability function from the semTools package (i.e., semTools::reliability) on the fit1f one-factor model object:
+
+
+
+
+
+```{r}
+
+library(semTools)
+reliability(fit.one.f)
+
+```
+
+
+
+The results listed in the omega and omega2 rows give the ωu estimate in which the denominator equals the model-implied variance of the total score X, and the results listed in the omega3 row are based on a variation in which the denominator equals the observed, sample variance of X, as described earlier.
+
+The omega3 estimate is referred to as “hierarchical omega” in the help documentation for semTools::reliability (Jorgensen et al., 2020) and in Kelley and Pornprasertmanit (2016), whereas this Tutorial follows most of the psychometric literature (e.g., Rodriguez et al., 2016; Zinbarg et al., 2006) by reserving the term omega-hierarchical for estimates based on a bifactor model, which is presented later in this Tutorial.
+
+Kelley and Pornprasertmanit (2016) reviewed different approaches to constructing CIs around omega estimates, ultimately recommending bootstrapping.
+
+
+
+
+
+
+## Calculating Coefficient Omega
+
+Recall that Coefficient Omega (ω) is a reliability estimate that accounts for the factor structure of the test, providing a more accurate measure than Cronbach's Alpha, especially in the presence of multidimensionality or when tau-equivalence is violated.
+
+
+#Categorical omega
+
+Because the factor loadings estimated from polychoric correlations represent the associations between the factor and latent-response variables rather than the observed item responses themselves, applying the ωu formula presented 
+#earlier in this context would give the proportion of variance explained by the factor relative to the variance of the 
+#sum of the latent-response variables instead of the total variance of the sum of the observed item responses; 
+#that is, ωu would represent the reliability of a hypothetical, latent total score instead of the reliability of the 
+#actual observed total score. To remedy this issue, Green and Yang (2009b) developed an alternative reliability estimate 
+#that is rescaled into the observed total score metric. This reliability estimate for unidimensional categorical items 
+#is referred to as ωu-cat.
+
+#Yang and Green established that, compared with ωu, ωu-cat produces more accurate reliability estimates for total score 
+#X with ordinal item-level data, especially when the univariate item-response distributions differ across items.
+
+#Because the psychoticism items have a 4-point response scale, I fitted the one-factor model to the interitem 
+#polychoric correlations using WLSMV, a robust weighted least squares estimator that is recommended over the ML 
+#estimator for CFA with polychoric correlations (Finney & DiStefano, 2013).
+
+
+```{r}
+# read in data
+library(rio)
+potic <- import("potic.csv")
+
+# Specify model
+mod.one.fCat <- 'psyctcsm =~ DDP1 + DDP2 +
+DDP3 + DDP4'
+
+
+# Estimate model
+fit.one.fCat <- cfa(mod.one.fCat, data=potic, std.lv=TRUE, ordered=T, estimator='WLSMV')
+
+# Retrieving the results
+summary(fit.one.fCat, fit.measures=TRUE, standardized=TRUE)
+
+
+```
+
+
 
 
 
