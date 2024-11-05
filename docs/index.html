@@ -203,6 +203,12 @@ window.Quarto = {
   <li><a href="#b.-fitting-the-cfa-model" id="toc-b.-fitting-the-cfa-model" class="nav-link" data-scroll-target="#b.-fitting-the-cfa-model">b. Fitting the CFA Model</a></li>
   </ul></li>
   <li><a href="#calculating-categorical-omega" id="toc-calculating-categorical-omega" class="nav-link" data-scroll-target="#calculating-categorical-omega">Calculating Categorical Omega</a></li>
+  <li><a href="#bifactor-models" id="toc-bifactor-models" class="nav-link" data-scroll-target="#bifactor-models">Bifactor Models</a>
+  <ul class="collapse">
+  <li><a href="#omega-hierarchical-ωh" id="toc-omega-hierarchical-ωh" class="nav-link" data-scroll-target="#omega-hierarchical-ωh">Omega Hierarchical (ωh)</a></li>
+  <li><a href="#higher-order-models" id="toc-higher-order-models" class="nav-link" data-scroll-target="#higher-order-models">Higher-Order Models</a></li>
+  </ul></li>
+  <li><a href="#exploratory-omega-estimates" id="toc-exploratory-omega-estimates" class="nav-link" data-scroll-target="#exploratory-omega-estimates">Exploratory Omega Estimates</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -325,7 +331,8 @@ window.Quarto = {
 <p>Here, I will walk through the step-by-step process of calculating Cronbach’s Alpha and Coefficient Omega using R.</p>
 <p>Load the necessary packages.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(psych,lavaan,semTools,tidyverse,semTools,psych,tidyverse,lavaan,rio)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(psych,lavaan,semTools,tidyverse,semTools,psych,tidyverse,lavaan,rio,parameters,</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>               nFactors,EGAnet,PCDimension)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="loading-the-bfi-dataset" class="level2">
@@ -781,6 +788,554 @@ avevar    0.5289638</code></pre>
 </div>
 <p>We can see that we have two estimates Cronbach’s alpha and differ a bit (0.80 &amp; 0.77). The is because the 2nd alpha estimate is an example of ordinal alpha, which is calculated using a model based on polychoric correlations, while the first alpha was derived using the standard method based on product-moment covariances between the items. It’s important to note that ordinal alpha measures the reliability of the sum of the continuous, latent-response variables rather than the observed categorical item responses. Additionally, it still assumes equal factor loadings (tau equivalence). Because of these limitations, I suggest disregarding the alpha value reported by semTools::reliability when the model uses polychoric correlations.</p>
 <p>The values shown in the <code>omega</code> and <code>omega2</code> rows represent the ωu-cat estimate. The <code>omega3</code> row shows a variation where the denominator uses the observed sample variance of ( X ). So, we can see ωu-cat estimates suggest that 79% of the variance in the total score for the psychoticism scale is explained by the single psychoticism factor.</p>
+</section>
+<section id="bifactor-models" class="level2">
+<h2 class="anchored" data-anchor-id="bifactor-models">Bifactor Models</h2>
+<p>A bifactor model is a useful way to represent a multidimensional structure. In this model, there’s a general factor that affects all items, while additional specific factors (or group factors) explain the relationships (covariation) between certain subsets of items beyond what the general factor accounts for.</p>
+<p>For the model to work correctly, the general factor needs to be uncorrelated with the specific factors. In contrast to other Confirmatory Factor Analysis (CFA) models where all factors can correlate freely, allowing the general factor to correlate with a specific factor in a bifactor model can lead to issues like non-convergence or incorrect solutions.</p>
+<section id="omega-hierarchical-ωh" class="level3">
+<h3 class="anchored" data-anchor-id="omega-hierarchical-ωh">Omega Hierarchical (ωh)</h3>
+<p>When data fits well with a bifactor model, a reliability metric called <strong>omega hierarchical (</strong><span class="math inline">\(ω_h\)</span>) is used. This measure reflects how much of the total score’s variance is attributable to the single general factor, even though the data involves multiple dimensions.</p>
+<p>Here, let’s demonstrate the estimation of <span class="math inline">\(ω_h\)</span> using R, I use data that from Flake, Ferland, &amp; Flora, 2017 collected by administering the PCS to 154 students in an introductory statistics course.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>pcs <span class="ot">&lt;-</span> <span class="fu">import</span>(<span class="st">"pcs.csv"</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(pcs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "TE1"  "TE2"  "TE3"  "TE4"  "TE5"  "OE1"  "OE2"  "OE3"  "OE4"  "LVA1"
+[11] "LVA2" "LVA3" "LVA4" "EM1"  "EM2"  "EM3"  "EM4"  "EM5"  "EM6" </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>modBf <span class="ot">&lt;-</span> <span class="st">"</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="st">gen =~ TE1+TE2+TE3+TE4+TE5+OE1+OE2+OE3+OE4+LVA1+LVA2+LVA3+LVA4 +EM1+EM2+EM3+EM4+EM5+EM6</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="st">s1 =~ TE1 + TE2 + TE3 + TE4 + TE5</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="st">s2 =~ OE1 + OE2 + OE3 + OE4</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="st">s3 =~ LVA1 + LVA2 + LVA3 + LVA4</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="st">s4 =~ EM1 + EM2 + EM3 + EM4 + EM5 + EM6</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="co">#Specify model</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>fitBf <span class="ot">&lt;-</span> <span class="fu">cfa</span>(modBf, <span class="at">data=</span>pcs, <span class="at">std.lv=</span>T, <span class="at">estimator=</span><span class="st">'MLR'</span>, <span class="at">orthogonal=</span>T)</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a><span class="co">#Retrieving the results</span></span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fitBf, <span class="at">fit.measures=</span><span class="cn">TRUE</span>, <span class="at">standardized=</span>T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>lavaan 0.6-19 ended normally after 36 iterations
+
+  Estimator                                         ML
+  Optimization method                           NLMINB
+  Number of model parameters                        57
+
+                                                  Used       Total
+  Number of observations                           154         172
+
+Model Test User Model:
+                                              Standard      Scaled
+  Test Statistic                               211.382     182.509
+  Degrees of freedom                               133         133
+  P-value (Chi-square)                           0.000       0.003
+  Scaling correction factor                                  1.158
+    Yuan-Bentler correction (Mplus variant)                       
+
+Model Test Baseline Model:
+
+  Test statistic                              2799.877    2260.239
+  Degrees of freedom                               171         171
+  P-value                                        0.000       0.000
+  Scaling correction factor                                  1.239
+
+User Model versus Baseline Model:
+
+  Comparative Fit Index (CFI)                    0.970       0.976
+  Tucker-Lewis Index (TLI)                       0.962       0.970
+                                                                  
+  Robust Comparative Fit Index (CFI)                         0.978
+  Robust Tucker-Lewis Index (TLI)                            0.972
+
+Loglikelihood and Information Criteria:
+
+  Loglikelihood user model (H0)              -3456.819   -3456.819
+  Scaling correction factor                                  1.269
+      for the MLR correction                                      
+  Loglikelihood unrestricted model (H1)      -3351.128   -3351.128
+  Scaling correction factor                                  1.191
+      for the MLR correction                                      
+                                                                  
+  Akaike (AIC)                                7027.638    7027.638
+  Bayesian (BIC)                              7200.744    7200.744
+  Sample-size adjusted Bayesian (SABIC)       7020.331    7020.331
+
+Root Mean Square Error of Approximation:
+
+  RMSEA                                          0.062       0.049
+  90 Percent confidence interval - lower         0.046       0.031
+  90 Percent confidence interval - upper         0.077       0.065
+  P-value H_0: RMSEA &lt;= 0.050                    0.108       0.520
+  P-value H_0: RMSEA &gt;= 0.080                    0.025       0.000
+                                                                  
+  Robust RMSEA                                               0.053
+  90 Percent confidence interval - lower                     0.032
+  90 Percent confidence interval - upper                     0.071
+  P-value H_0: Robust RMSEA &lt;= 0.050                         0.387
+  P-value H_0: Robust RMSEA &gt;= 0.080                         0.005
+
+Standardized Root Mean Square Residual:
+
+  SRMR                                           0.038       0.038
+
+Parameter Estimates:
+
+  Standard errors                             Sandwich
+  Information bread                           Observed
+  Observed information based on                Hessian
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+  gen =~                                                                
+    TE1               1.041    0.071   14.715    0.000    1.041    0.843
+    TE2               1.045    0.084   12.430    0.000    1.045    0.794
+    TE3               0.848    0.090    9.392    0.000    0.848    0.721
+    TE4               0.984    0.075   13.097    0.000    0.984    0.834
+    TE5               1.004    0.082   12.264    0.000    1.004    0.819
+    OE1               0.787    0.083    9.537    0.000    0.787    0.631
+    OE2               0.819    0.080   10.207    0.000    0.819    0.695
+    OE3               0.738    0.089    8.319    0.000    0.738    0.605
+    OE4               0.742    0.087    8.512    0.000    0.742    0.636
+    LVA1              0.937    0.084   11.180    0.000    0.937    0.796
+    LVA2              0.863    0.071   12.205    0.000    0.863    0.797
+    LVA3              0.816    0.085    9.649    0.000    0.816    0.719
+    LVA4              0.865    0.098    8.802    0.000    0.865    0.695
+    EM1               0.968    0.095   10.215    0.000    0.968    0.715
+    EM2               0.930    0.078   11.957    0.000    0.930    0.800
+    EM3               0.959    0.091   10.542    0.000    0.959    0.731
+    EM4               0.885    0.091    9.679    0.000    0.885    0.732
+    EM5               1.043    0.086   12.121    0.000    1.043    0.816
+    EM6               1.108    0.100   11.054    0.000    1.108    0.750
+  s1 =~                                                                 
+    TE1               0.351    0.114    3.071    0.002    0.351    0.285
+    TE2               0.451    0.144    3.142    0.002    0.451    0.343
+    TE3               0.402    0.170    2.360    0.018    0.402    0.342
+    TE4               0.162    0.111    1.457    0.145    0.162    0.137
+    TE5               0.269    0.154    1.747    0.081    0.269    0.219
+  s2 =~                                                                 
+    OE1               0.626    0.107    5.860    0.000    0.626    0.502
+    OE2               0.516    0.096    5.399    0.000    0.516    0.438
+    OE3               0.673    0.107    6.291    0.000    0.673    0.552
+    OE4               0.739    0.085    8.738    0.000    0.739    0.634
+  s3 =~                                                                 
+    LVA1              0.253    0.107    2.357    0.018    0.253    0.215
+    LVA2              0.573    0.081    7.081    0.000    0.573    0.529
+    LVA3              0.422    0.104    4.051    0.000    0.422    0.372
+    LVA4              0.528    0.104    5.074    0.000    0.528    0.424
+  s4 =~                                                                 
+    EM1               0.506    0.152    3.324    0.001    0.506    0.374
+    EM2               0.346    0.086    4.026    0.000    0.346    0.298
+    EM3               0.567    0.121    4.682    0.000    0.567    0.432
+    EM4               0.562    0.098    5.707    0.000    0.562    0.464
+    EM5               0.479    0.097    4.930    0.000    0.479    0.375
+    EM6               0.651    0.148    4.403    0.000    0.651    0.440
+
+Covariances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+  gen ~~                                                                
+    s1                0.000                               0.000    0.000
+    s2                0.000                               0.000    0.000
+    s3                0.000                               0.000    0.000
+    s4                0.000                               0.000    0.000
+  s1 ~~                                                                 
+    s2                0.000                               0.000    0.000
+    s3                0.000                               0.000    0.000
+    s4                0.000                               0.000    0.000
+  s2 ~~                                                                 
+    s3                0.000                               0.000    0.000
+    s4                0.000                               0.000    0.000
+  s3 ~~                                                                 
+    s4                0.000                               0.000    0.000
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+   .TE1               0.318    0.067    4.777    0.000    0.318    0.209
+   .TE2               0.434    0.088    4.913    0.000    0.434    0.251
+   .TE3               0.501    0.104    4.827    0.000    0.501    0.363
+   .TE4               0.397    0.066    5.987    0.000    0.397    0.285
+   .TE5               0.421    0.073    5.799    0.000    0.421    0.281
+   .OE1               0.546    0.106    5.129    0.000    0.546    0.350
+   .OE2               0.451    0.075    6.003    0.000    0.451    0.325
+   .OE3               0.490    0.117    4.183    0.000    0.490    0.330
+   .OE4               0.263    0.071    3.718    0.000    0.263    0.194
+   .LVA1              0.442    0.064    6.873    0.000    0.442    0.320
+   .LVA2              0.100    0.062    1.607    0.108    0.100    0.085
+   .LVA3              0.443    0.075    5.892    0.000    0.443    0.344
+   .LVA4              0.523    0.088    5.954    0.000    0.523    0.337
+   .EM1               0.639    0.100    6.388    0.000    0.639    0.349
+   .EM2               0.365    0.060    6.049    0.000    0.365    0.271
+   .EM3               0.482    0.090    5.383    0.000    0.482    0.280
+   .EM4               0.364    0.083    4.395    0.000    0.364    0.249
+   .EM5               0.318    0.063    5.032    0.000    0.318    0.195
+   .EM6               0.534    0.117    4.564    0.000    0.534    0.244
+    gen               1.000                               1.000    1.000
+    s1                1.000                               1.000    1.000
+    s2                1.000                               1.000    1.000
+    s3                1.000                               1.000    1.000
+    s4                1.000                               1.000    1.000</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fitmeasures</span>(fitBf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                         npar                          fmin 
+                       57.000                         0.686 
+                        chisq                            df 
+                      211.382                       133.000 
+                       pvalue                  chisq.scaled 
+                        0.000                       182.509 
+                    df.scaled                 pvalue.scaled 
+                      133.000                         0.003 
+         chisq.scaling.factor                baseline.chisq 
+                        1.158                      2799.877 
+                  baseline.df               baseline.pvalue 
+                      171.000                         0.000 
+        baseline.chisq.scaled            baseline.df.scaled 
+                     2260.239                       171.000 
+       baseline.pvalue.scaled baseline.chisq.scaling.factor 
+                        0.000                         1.239 
+                          cfi                           tli 
+                        0.970                         0.962 
+                   cfi.scaled                    tli.scaled 
+                        0.976                         0.970 
+                   cfi.robust                    tli.robust 
+                        0.978                         0.972 
+                         nnfi                           rfi 
+                        0.962                         0.903 
+                          nfi                          pnfi 
+                        0.925                         0.719 
+                          ifi                           rni 
+                        0.971                         0.970 
+                  nnfi.scaled                    rfi.scaled 
+                        0.970                         0.896 
+                   nfi.scaled                   pnfi.scaled 
+                        0.919                         0.715 
+                   ifi.scaled                    rni.scaled 
+                        0.977                         0.976 
+                  nnfi.robust                    rni.robust 
+                        0.972                         0.978 
+                         logl             unrestricted.logl 
+                    -3456.819                     -3351.128 
+                          aic                           bic 
+                     7027.638                      7200.744 
+                       ntotal                          bic2 
+                      154.000                      7020.331 
+            scaling.factor.h1             scaling.factor.h0 
+                        1.191                         1.269 
+                        rmsea                rmsea.ci.lower 
+                        0.062                         0.046 
+               rmsea.ci.upper                rmsea.ci.level 
+                        0.077                         0.900 
+                 rmsea.pvalue                rmsea.close.h0 
+                        0.108                         0.050 
+        rmsea.notclose.pvalue             rmsea.notclose.h0 
+                        0.025                         0.080 
+                 rmsea.scaled         rmsea.ci.lower.scaled 
+                        0.049                         0.031 
+        rmsea.ci.upper.scaled           rmsea.pvalue.scaled 
+                        0.065                         0.520 
+ rmsea.notclose.pvalue.scaled                  rmsea.robust 
+                        0.000                         0.053 
+        rmsea.ci.lower.robust         rmsea.ci.upper.robust 
+                        0.032                         0.071 
+          rmsea.pvalue.robust  rmsea.notclose.pvalue.robust 
+                        0.387                         0.005 
+                          rmr                    rmr_nomean 
+                        0.056                         0.056 
+                         srmr                  srmr_bentler 
+                        0.038                         0.038 
+          srmr_bentler_nomean                          crmr 
+                        0.038                         0.040 
+                  crmr_nomean                    srmr_mplus 
+                        0.040                         0.038 
+            srmr_mplus_nomean                         cn_05 
+                        0.038                       118.233 
+                        cn_01                           gfi 
+                      127.659                         0.877 
+                         agfi                          pgfi 
+                        0.824                         0.614 
+                          mfi                          ecvi 
+                        0.775                         2.113 </code></pre>
+</div>
+</div>
+<p>From the results above, we can the bifactor model fits the PCS data well, with robust model-fit statistics, CFI = 0.978, TLI = 0.972, RMSEA = 0.053. Thus, it is reasonable to calculate <span class="math inline">\(ω_h\)</span> to estimate how reliably the PCS total score measures the general psychological-cost factor.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">reliability</span>(fitBf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             gen         s1        s2        s3        s4
+alpha  0.9638781 0.92504205 0.8992820 0.9052459 0.9405882
+omega  0.9741033 0.56377307 0.7884791 0.6766430 0.7816839
+omega2 0.9094893 0.09237594 0.3666293 0.1880759 0.2054075
+omega3 0.9077636 0.09240479 0.3666634 0.1878380 0.2053012
+avevar        NA         NA        NA        NA        NA</code></pre>
+</div>
+</div>
+<p>The values shown under the “gen” column relate to the general psychological cost factor. The omega estimate (0.974) doesn’t take the specific factors into account when calculating the variance of the total score, so it’s not the appropriate reliability measure for the PCS total score. Instead, the <strong>omega2</strong> and <strong>omega3</strong> values under “gen” represent <strong>omega hierarchical (</strong><span class="math inline">\(ω_h\)</span>). The difference between them is that <strong>omega2</strong> uses the model-implied variance of the total score, while <strong>omega3</strong> relies on the observed variance from the sample.</p>
+<p>In simple terms, both <span class="math inline">\(ω_h\)</span> values tell us that <strong>91% of the variance in the PCS total score</strong> is explained by the general psychological cost factor, after accounting for the specific factors that influence different content areas.</p>
+</section>
+<section id="higher-order-models" class="level3">
+<h3 class="anchored" data-anchor-id="higher-order-models">Higher-Order Models</h3>
+<p>In the bifactor model example, I treated the multidimensional nature of the PCS items as a distraction when measuring a broad, general psychological cost construct. However, in other cases, researchers may propose a different structure where a broad overarching factor indirectly influences all the test items by acting through more specific, narrower constructs that directly affect different subsets of items. This kind of setup suggests a <strong>higher-order model</strong>, where a higher-order (or second-order) factor drives differences in several lower-order (first-order) factors, which, in turn, influence the individual item responses.</p>
+<p>In this model, researchers assess how well the test captures both the overall score (reflecting the broad higher-order construct) and the subscale scores (reflecting the more specific lower-order constructs).</p>
+<p>When the data fit a higher-order model, the reliability of the total score is measured by <strong>omega-higher-order (</strong><span class="math inline">\(ω_{ho}\)</span>), which represents the proportion of the total score’s variance that can be attributed to the higher-order factor. The calculation of ωho uses parameter estimates from the higher-order model.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Specify the higher-order factor model for the PCS items</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>homod <span class="ot">&lt;-</span> <span class="st">'TE =~ TE1 + TE2 + TE3 + TE4 + TE5 </span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="st">      OE =~ OE1 + OE2 + OE3 + OE4</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="st">      LV =~ LVA1 + LVA2 + LVA3 + LVA4</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="st">      EM =~ EM1 + EM2 + EM3 + EM4 + EM5 + EM6</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a><span class="st">      cost =~ TE + OE + LV + EM'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Estimate the model and get the results</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>fitHo <span class="ot">&lt;-</span> <span class="fu">cfa</span>(homod, <span class="at">data=</span>pcs, <span class="at">std.lv=</span>T, <span class="at">estimator=</span><span class="st">'MLM'</span>)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fitHo, <span class="at">fit.measures=</span>T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>lavaan 0.6-19 ended normally after 57 iterations
+
+  Estimator                                         ML
+  Optimization method                           NLMINB
+  Number of model parameters                        42
+
+                                                  Used       Total
+  Number of observations                           154         172
+
+Model Test User Model:
+                                              Standard      Scaled
+  Test Statistic                               243.444     185.699
+  Degrees of freedom                               148         148
+  P-value (Chi-square)                           0.000       0.019
+  Scaling correction factor                                  1.311
+    Satorra-Bentler correction                                    
+
+Model Test Baseline Model:
+
+  Test statistic                              2799.877    2282.637
+  Degrees of freedom                               171         171
+  P-value                                        0.000       0.000
+  Scaling correction factor                                  1.227
+
+User Model versus Baseline Model:
+
+  Comparative Fit Index (CFI)                    0.964       0.982
+  Tucker-Lewis Index (TLI)                       0.958       0.979
+                                                                  
+  Robust Comparative Fit Index (CFI)                         0.981
+  Robust Tucker-Lewis Index (TLI)                            0.978
+
+Loglikelihood and Information Criteria:
+
+  Loglikelihood user model (H0)              -3472.850   -3472.850
+  Loglikelihood unrestricted model (H1)      -3351.128   -3351.128
+                                                                  
+  Akaike (AIC)                                7029.700    7029.700
+  Bayesian (BIC)                              7157.252    7157.252
+  Sample-size adjusted Bayesian (SABIC)       7024.315    7024.315
+
+Root Mean Square Error of Approximation:
+
+  RMSEA                                          0.065       0.041
+  90 Percent confidence interval - lower         0.050       0.021
+  90 Percent confidence interval - upper         0.079       0.056
+  P-value H_0: RMSEA &lt;= 0.050                    0.052       0.832
+  P-value H_0: RMSEA &gt;= 0.080                    0.039       0.000
+                                                                  
+  Robust RMSEA                                               0.047
+  90 Percent confidence interval - lower                     0.020
+  90 Percent confidence interval - upper                     0.066
+  P-value H_0: Robust RMSEA &lt;= 0.050                         0.592
+  P-value H_0: Robust RMSEA &gt;= 0.080                         0.002
+
+Standardized Root Mean Square Residual:
+
+  SRMR                                           0.045       0.045
+
+Parameter Estimates:
+
+  Standard errors                           Robust.sem
+  Information                                 Expected
+  Information saturated (h1) model          Structured
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+  TE =~                                               
+    TE1               0.356    0.067    5.289    0.000
+    TE2               0.364    0.065    5.554    0.000
+    TE3               0.299    0.059    5.056    0.000
+    TE4               0.323    0.058    5.605    0.000
+    TE5               0.338    0.065    5.198    0.000
+  OE =~                                               
+    OE1               0.641    0.074    8.642    0.000
+    OE2               0.616    0.060   10.334    0.000
+    OE3               0.630    0.066    9.523    0.000
+    OE4               0.647    0.064   10.078    0.000
+  LV =~                                               
+    LVA1              0.442    0.056    7.836    0.000
+    LVA2              0.457    0.059    7.751    0.000
+    LVA3              0.427    0.059    7.286    0.000
+    LVA4              0.460    0.056    8.258    0.000
+  EM =~                                               
+    EM1               0.509    0.069    7.394    0.000
+    EM2               0.462    0.066    7.018    0.000
+    EM3               0.517    0.074    6.955    0.000
+    EM4               0.483    0.067    7.179    0.000
+    EM5               0.535    0.069    7.756    0.000
+    EM6               0.595    0.080    7.430    0.000
+  cost =~                                             
+    TE                2.914    0.595    4.894    0.000
+    OE                1.223    0.155    7.880    0.000
+    LV                1.951    0.281    6.933    0.000
+    EM                1.900    0.327    5.809    0.000
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+   .TE1               0.321    0.063    5.081    0.000
+   .TE2               0.473    0.069    6.837    0.000
+   .TE3               0.531    0.100    5.289    0.000
+   .TE4               0.398    0.073    5.494    0.000
+   .TE5               0.418    0.070    5.935    0.000
+   .OE1               0.531    0.099    5.353    0.000
+   .OE2               0.440    0.081    5.428    0.000
+   .OE3               0.495    0.099    5.001    0.000
+   .OE4               0.315    0.055    5.719    0.000
+   .LVA1              0.443    0.081    5.466    0.000
+   .LVA2              0.170    0.035    4.851    0.000
+   .LVA3              0.412    0.064    6.473    0.000
+   .LVA4              0.533    0.090    5.945    0.000
+   .EM1               0.637    0.085    7.508    0.000
+   .EM2               0.367    0.062    5.872    0.000
+   .EM3               0.493    0.075    6.564    0.000
+   .EM4               0.387    0.064    6.017    0.000
+   .EM5               0.315    0.062    5.059    0.000
+   .EM6               0.554    0.085    6.515    0.000
+   .TE                1.000                           
+   .OE                1.000                           
+   .LV                1.000                           
+   .EM                1.000                           
+    cost              1.000                           </code></pre>
+</div>
+</div>
+<section id="lets-obtain-omega-ho-from-a-higher-order-model-for-the-psychological-cost-scale" class="level4">
+<h4 class="anchored" data-anchor-id="lets-obtain-omega-ho-from-a-higher-order-model-for-the-psychological-cost-scale">Let’s obtain omega-ho from a higher-order model for the Psychological Cost Scale</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">reliabilityL2</span>(fitHo, <span class="st">'cost'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       omegaL1        omegaL2 partialOmegaL1 
+     0.9088176      0.9410190      0.9734520 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Obtain omega estimates for the subscale scores as measures of the lower-order factors</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="fu">reliability</span>(fitHo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              TE        OE        LV        EM
+alpha  0.9250420 0.8992820 0.9052459 0.9405882
+omega  0.9260209 0.9000548 0.9077522 0.9415490
+omega2 0.9260209 0.9000548 0.9077522 0.9415490
+omega3 0.9256773 0.9014397 0.9125259 0.9404921
+avevar 0.7155347 0.6925123 0.7111716 0.7299181</code></pre>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="exploratory-omega-estimates" class="level2">
+<h2 class="anchored" data-anchor-id="exploratory-omega-estimates">Exploratory Omega Estimates</h2>
+<p>So far, the examples have relied on semTools’ <code>reliability</code> (or <code>reliabilityL2</code>) function to calculate omega estimates based on CFA models. However, these omega estimates are only valid if the underlying model for the test is correctly specified. For instance, using <span class="math inline">\(ω_u\)</span> as a reliability estimate wouldn’t be appropriate if the true model is multidimensional, as indicated by a poor fit for a single-factor model.</p>
+<p>When a hypothesized CFA model doesn’t adequately fit the data—which is common in the early stages of test development—Exploratory Factor Analysis (EFA) can help identify the test’s dimensional structure. After determining the optimal number of factors for a test, you can use the <code>omega</code> function from the <strong>psych</strong> package (Revelle, 2020) to estimate omega based on the EFA parameters. This estimate will reflect the proportion of total score variance attributable to a general factor that influences all items.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Determine number of factors</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="fu">n_factors</span>(pcs, <span class="at">package =</span> <span class="st">"all"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># Method Agreement Procedure:
+
+The choice of 4 dimensions is supported by 7 (25.93%) methods out of 27 (beta, Scree (SE), EGA (glasso), Velicer's MAP, BIC, Fit_off, BIC).</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Determine omega for 4 factor model</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">omega</span>(pcs, <span class="at">nfactors =</span> <span class="dv">4</span>, <span class="at">plot =</span> F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required namespace: GPArotation</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Omega 
+Call: omegah(m = m, nfactors = nfactors, fm = fm, key = key, flip = flip, 
+    digits = digits, title = title, sl = sl, labels = labels, 
+    plot = plot, n.obs = n.obs, rotate = rotate, Phi = Phi, option = option, 
+    covar = covar)
+Alpha:                 0.96 
+G.6:                   0.98 
+Omega Hierarchical:    0.85 
+Omega H asymptotic:    0.88 
+Omega Total            0.98 
+
+Schmid Leiman Factor loadings greater than  0.2 
+        g   F1*   F2*   F3*   F4*   h2   h2   u2   p2  com
+TE1  0.81              0.39       0.81 0.81 0.19 0.80 1.50
+TE2  0.76              0.40       0.75 0.75 0.25 0.77 1.53
+TE3  0.70              0.35       0.62 0.62 0.38 0.80 1.52
+TE4  0.78              0.29       0.72 0.72 0.28 0.84 1.41
+TE5  0.77              0.34       0.74 0.74 0.26 0.80 1.46
+OE1  0.61        0.55             0.67 0.67 0.33 0.56 2.02
+OE2  0.67        0.46             0.66 0.66 0.34 0.68 1.81
+OE3  0.61        0.54             0.68 0.68 0.32 0.54 2.02
+OE4  0.63        0.62             0.80 0.80 0.20 0.50 2.02
+LVA1 0.75                    0.28 0.67 0.67 0.33 0.85 1.37
+LVA2 0.80                    0.48 0.87 0.87 0.13 0.73 1.66
+LVA3 0.71        0.20        0.37 0.71 0.71 0.29 0.72 1.69
+LVA4 0.70                    0.43 0.67 0.67 0.33 0.72 1.68
+EM1  0.69  0.39                   0.66 0.66 0.34 0.73 1.64
+EM2  0.76  0.38                   0.75 0.75 0.25 0.77 1.57
+EM3  0.72  0.47                   0.73 0.73 0.27 0.71 1.76
+EM4  0.72  0.48                   0.74 0.74 0.26 0.70 1.76
+EM5  0.78  0.43                   0.81 0.81 0.19 0.76 1.59
+EM6  0.73  0.48                   0.78 0.78 0.22 0.68 1.78
+
+With Sums of squares  of:
+    g   F1*   F2*   F3*   F4*    h2 
+ 9.95  1.21  1.29  0.70  0.68 10.16 
+
+general/max  0.98   max/min =   14.84
+mean percent general =  0.72    with sd =  0.1 and cv of  0.13 
+Explained Common Variance of the general factor =  0.72 
+
+The degrees of freedom are 101  and the fit is  1 
+The number of observations was  172  with Chi Square =  161.11  with prob &lt;  0.00013
+The root mean square of the residuals is  0.02 
+The df corrected root mean square of the residuals is  0.03
+RMSEA index =  0.059  and the 10 % confidence intervals are  0.041 0.076
+BIC =  -358.79
+
+Compare this with the adequacy of just a general factor and no group factors
+The degrees of freedom for just the general factor are 152  and the fit is  4.49 
+The number of observations was  172  with Chi Square =  732.57  with prob &lt;  8.2e-77
+The root mean square of the residuals is  0.1 
+The df corrected root mean square of the residuals is  0.11 
+
+RMSEA index =  0.149  and the 10 % confidence intervals are  0.139 0.16
+BIC =  -49.85 
+
+Measures of factor score adequacy             
+                                                 g  F1*  F2*  F3*  F4*
+Correlation of scores with factors            0.93 0.79 0.86 0.72 0.77
+Multiple R square of scores with factors      0.86 0.63 0.73 0.52 0.59
+Minimum correlation of factor score estimates 0.73 0.26 0.47 0.04 0.18
+
+ Total, General and Subset omega for each subset
+                                                 g  F1*  F2*  F3* F4*
+Omega total for total scores and subscales    0.98 0.94 0.90 0.92 0.9
+Omega general for total scores and subscales  0.85 0.69 0.52 0.76 0.7
+Omega group for total scores and subscales    0.08 0.25 0.38 0.16 0.2</code></pre>
+</div>
+</div>
 
 
 </section>

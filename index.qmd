@@ -131,7 +131,8 @@ Load the necessary packages.
 
 ```{r}
 
-pacman::p_load(psych,lavaan,semTools,tidyverse,semTools,psych,tidyverse,lavaan,rio)
+pacman::p_load(psych,lavaan,semTools,tidyverse,semTools,psych,tidyverse,lavaan,rio,parameters,
+               nFactors,EGAnet,PCDimension)
 
 ```
 
@@ -372,11 +373,135 @@ We can see that we have two estimates Cronbach’s alpha and differ a bit (0.80 
 
 The values shown in the `omega` and `omega2` rows represent the ωu-cat estimate. The `omega3` row shows a variation where the denominator uses the observed sample variance of ( X ). So, we can see ωu-cat estimates suggest that 79% of the variance in the total score for the psychoticism scale is explained by the single psychoticism factor.
 
+## Bifactor Models
+
+A bifactor model is a useful way to represent a multidimensional structure. In this model, there’s a general factor that affects all items, while additional specific factors (or group factors) explain the relationships (covariation) between certain subsets of items beyond what the general factor accounts for.
+
+For the model to work correctly, the general factor needs to be uncorrelated with the specific factors. In contrast to other Confirmatory Factor Analysis (CFA) models where all factors can correlate freely, allowing the general factor to correlate with a specific factor in a bifactor model can lead to issues like non-convergence or incorrect solutions.
+
+### Omega Hierarchical (ωh)
+
+When data fits well with a bifactor model, a reliability metric called **omega hierarchical (**$ω_h$) is used. This measure reflects how much of the total score's variance is attributable to the single general factor, even though the data involves multiple dimensions.
+
+Here, let's demonstrate the estimation of $ω_h$ using R, I use data that from Flake, Ferland, & Flora, 2017 collected by administering the PCS to 154 students in an introductory statistics course.
+
+```{r}
+pcs <- import("pcs.csv")
+names(pcs)
+
+```
+
+```{r}
+
+modBf <- "
+gen =~ TE1+TE2+TE3+TE4+TE5+OE1+OE2+OE3+OE4+LVA1+LVA2+LVA3+LVA4 +EM1+EM2+EM3+EM4+EM5+EM6
+s1 =~ TE1 + TE2 + TE3 + TE4 + TE5
+s2 =~ OE1 + OE2 + OE3 + OE4
+s3 =~ LVA1 + LVA2 + LVA3 + LVA4
+s4 =~ EM1 + EM2 + EM3 + EM4 + EM5 + EM6
+"
+
+#Specify model
+fitBf <- cfa(modBf, data=pcs, std.lv=T, estimator='MLR', orthogonal=T)
+
+#Retrieving the results
+summary(fitBf, fit.measures=TRUE, standardized=T)
+
+```
+
+```{r}
+
+fitmeasures(fitBf)
+
+```
+
+From the results above, we can the bifactor model fits the PCS data well, with robust model-fit statistics, CFI = 0.978, TLI = 0.972, RMSEA = 0.053. Thus, it is reasonable to calculate $ω_h$ to estimate how reliably the PCS total score measures the general psychological-cost factor.
+
+```{r}
+
+reliability(fitBf)
+
+```
+
+The values shown under the "gen" column relate to the general psychological cost factor. The omega estimate (0.974) doesn’t take the specific factors into account when calculating the variance of the total score, so it’s not the appropriate reliability measure for the PCS total score. Instead, the **omega2** and **omega3** values under "gen" represent **omega hierarchical (**$ω_h$). The difference between them is that **omega2** uses the model-implied variance of the total score, while **omega3** relies on the observed variance from the sample.
+
+In simple terms, both $ω_h$ values tell us that **91% of the variance in the PCS total score** is explained by the general psychological cost factor, after accounting for the specific factors that influence different content areas.
+
+### Higher-Order Models
+
+In the bifactor model example, I treated the multidimensional nature of the PCS items as a distraction when measuring a broad, general psychological cost construct. However, in other cases, researchers may propose a different structure where a broad overarching factor indirectly influences all the test items by acting through more specific, narrower constructs that directly affect different subsets of items. This kind of setup suggests a **higher-order model**, where a higher-order (or second-order) factor drives differences in several lower-order (first-order) factors, which, in turn, influence the individual item responses.
+
+In this model, researchers assess how well the test captures both the overall score (reflecting the broad higher-order construct) and the subscale scores (reflecting the more specific lower-order constructs).
+
+When the data fit a higher-order model, the reliability of the total score is measured by **omega-higher-order (**$ω_{ho}$), which represents the proportion of the total score’s variance that can be attributed to the higher-order factor. The calculation of ωho uses parameter estimates from the higher-order model.
+
+
+```{r}
+#Specify the higher-order factor model for the PCS items
+
+homod <- 'TE =~ TE1 + TE2 + TE3 + TE4 + TE5 
+      OE =~ OE1 + OE2 + OE3 + OE4
+      LV =~ LVA1 + LVA2 + LVA3 + LVA4
+      EM =~ EM1 + EM2 + EM3 + EM4 + EM5 + EM6
+      cost =~ TE + OE + LV + EM'
+```
 
 
 ```{r}
 
+#Estimate the model and get the results
+fitHo <- cfa(homod, data=pcs, std.lv=T, estimator='MLM')
+summary(fitHo, fit.measures=T)
+
 ```
+
+
+
+#### Let's obtain omega-ho from a higher-order model for the Psychological Cost Scale
+
+```{r}
+
+reliabilityL2(fitHo, 'cost')
+
+```
+
+
+```{r}
+
+#Obtain omega estimates for the subscale scores as measures of the lower-order factors
+reliability(fitHo)
+```
+
+
+## Exploratory Omega Estimates
+
+So far, the examples have relied on semTools’ `reliability` (or `reliabilityL2`) function to calculate omega estimates based on CFA models. However, these omega estimates are only valid if the underlying model for the test is correctly specified. For instance, using $ω_u$ as a reliability estimate wouldn’t be appropriate if the true model is multidimensional, as indicated by a poor fit for a single-factor model.
+
+When a hypothesized CFA model doesn’t adequately fit the data—which is common in the early stages of test development—Exploratory Factor Analysis (EFA) can help identify the test’s dimensional structure. After determining the optimal number of factors for a test, you can use the `omega` function from the **psych** package (Revelle, 2020) to estimate omega based on the EFA parameters. This estimate will reflect the proportion of total score variance attributable to a general factor that influences all items.
+
+
+
+```{r}
+
+#Determine number of factors
+
+n_factors(pcs, package = "all")
+
+```
+
+
+
+```{r}
+
+#Determine omega for 4 factor model
+omega(pcs, nfactors = 4, plot = F)
+
+```
+
+
+
+
+
 
 
 
