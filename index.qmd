@@ -5,7 +5,7 @@ format: html
 editor: visual
 ---
 
-# Chapter 1
+# Chapter 1- Reliability Index Analysis
 
 ## Introduction to Reliability Index Analysis
 
@@ -435,7 +435,6 @@ In this model, researchers assess how well the test captures both the overall sc
 
 When the data fit a higher-order model, the reliability of the total score is measured by **omega-higher-order (**$ω_{ho}$), which represents the proportion of the total score’s variance that can be attributed to the higher-order factor. The calculation of ωho uses parameter estimates from the higher-order model.
 
-
 ```{r}
 #Specify the higher-order factor model for the PCS items
 
@@ -446,7 +445,6 @@ homod <- 'TE =~ TE1 + TE2 + TE3 + TE4 + TE5
       cost =~ TE + OE + LV + EM'
 ```
 
-
 ```{r}
 
 #Estimate the model and get the results
@@ -454,8 +452,6 @@ fitHo <- cfa(homod, data=pcs, std.lv=T, estimator='MLM')
 summary(fitHo, fit.measures=T)
 
 ```
-
-
 
 #### Let's obtain omega-ho from a higher-order model for the Psychological Cost Scale
 
@@ -465,21 +461,17 @@ reliabilityL2(fitHo, 'cost')
 
 ```
 
-
 ```{r}
 
 #Obtain omega estimates for the subscale scores as measures of the lower-order factors
 reliability(fitHo)
 ```
 
-
 ## Exploratory Omega Estimates
 
 So far, the examples have relied on semTools’ `reliability` (or `reliabilityL2`) function to calculate omega estimates based on CFA models. However, these omega estimates are only valid if the underlying model for the test is correctly specified. For instance, using $ω_u$ as a reliability estimate wouldn’t be appropriate if the true model is multidimensional, as indicated by a poor fit for a single-factor model.
 
 When a hypothesized CFA model doesn’t adequately fit the data—which is common in the early stages of test development—Exploratory Factor Analysis (EFA) can help identify the test’s dimensional structure. After determining the optimal number of factors for a test, you can use the `omega` function from the **psych** package (Revelle, 2020) to estimate omega based on the EFA parameters. This estimate will reflect the proportion of total score variance attributable to a general factor that influences all items.
-
-
 
 ```{r}
 
@@ -489,8 +481,6 @@ n_factors(pcs, package = "all")
 
 ```
 
-
-
 ```{r}
 
 #Determine omega for 4 factor model
@@ -498,12 +488,11 @@ omega(pcs, nfactors = 4, plot = F)
 
 ```
 
-
-
 The results from the exploratory factor analysis indicate that the four-factor model provides a strong fit, with an overall omega total of 0.98, suggesting excellent reliability for the total score. The omega hierarchical value of 0.85 indicates that 85% of the total-score variance is attributable to a general factor, showing that the general psychological cost factor plays a dominant role in explaining the variance across items. Additionally, the individual subscales also show good reliability, with their omega total values ranging from 0.90 to 0.94.
 
+#Chapter 2- Linear Model
 
-
+To learn about model diagnostics, you may want to check this invited lecture I gave last Winter. [Testing Model Assumptions](https://drhammed.github.io/Biol322_2024_lecture/#2).
 
 
 
