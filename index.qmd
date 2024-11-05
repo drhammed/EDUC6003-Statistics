@@ -25,12 +25,11 @@ Reliability refers to the consistency and precision of measurement instruments. 
 
 #### Types of Reliability
 
-*Internal Consistency*: Degree to which items within a test measure the same construct. 
+*Internal Consistency*: Degree to which items within a test measure the same construct.
 
-*Test-Retest Reliability*: Consistency of scores over time. 
+*Test-Retest Reliability*: Consistency of scores over time.
 
 *Inter-Rater Reliability*: Agreement between different raters or observers.
-
 
 ## Classical Test Theory (CTT) and Coefficient Alpha
 
@@ -52,18 +51,13 @@ $$
 
 Where:
 
-$\alpha$ = Cronbach's Alpha 
+$\alpha$ = Cronbach's Alpha
 
 𝑁 = Number of items in the test
 
-
 $\sigma^2_{E}$ = Variance of the error scores
 
-
 $\sigma^2_{X}$ = Variance of the observed total scores
-
-
-
 
 #### Assumptions of Alpha
 
@@ -73,7 +67,6 @@ $\sigma^2_{X}$ = Variance of the observed total scores
 
 *Independence of Errors*: Error terms are uncorrelated across items.
 
-
 #### Limitations of Alpha
 
 *Sensitivity to Tau Equivalence*: Violations can lead to underestimation or overestimation of reliability.
@@ -82,13 +75,9 @@ $\sigma^2_{X}$ = Variance of the observed total scores
 
 *Ignores Factor Structure*: Does not account for the underlying factor model of the test.
 
-
 ### Coefficient Omega
 
 Coefficient Omega is a more robust alternative to Cronbach's Alpha, especially when the assumption of tau-equivalence (equal factor loadings) is violated. Omega takes into account the factor structure of the test, making it suitable for both unidimensional and multidimensional scales.
-
-
-
 
 #### Types of Omega
 
@@ -96,24 +85,21 @@ Coefficient Omega is a more robust alternative to Cronbach's Alpha, especially w
 
 *Omega Hierarchical (ωₕ)*: Represents the proportion of variance attributable to a general factor alone.
 
-
 Omega Total is given by:
 
 $$
 \omega_t = \frac{\sum_{i=1}^{k} \lambda_i}{\sum_{i=1}^{k} \lambda_i + \sum_{i=1}^{k} \theta_i}
 $$
 
-
 Where:
 
-$\omega_t$  = Omega Total
+$\omega_t$ = Omega Total
 
-$\lambda_i$  = Factor loading for item 
+$\lambda_i$ = Factor loading for item
 
-$\theta_i$  = Unique variance (error variance) for item 
-   
-$k$  = Total number of items
+$\theta_i$ = Unique variance (error variance) for item
 
+$k$ = Total number of items
 
 For a hierarchical model, Omega Hierarchical is:
 
@@ -121,16 +107,13 @@ $$
 \omega_h = \frac{\lambda_g^2}{\lambda_g^2 + \sum_{i=1}^{k} \theta_i}
 $$
 
-
 where:
 
+$\omega_h$ = Omega Hierarchical
 
-$\omega_h$  = Omega Hierarchical
+$\lambda_g$ = Factor loading of the general factor
 
-$\lambda_g$  = Factor loading of the general factor
-
-$\theta_i$  = Unique variance for item $i$
-
+$\theta_i$ = Unique variance for item $i$
 
 #### Advantages of Omega Over Alpha
 
@@ -140,16 +123,9 @@ $\theta_i$  = Unique variance for item $i$
 
 *Applicability to Multidimensional Scales*: Suitable for tests measuring multiple constructs.
 
-
-
-
-
 ## Calculations in R
 
-
 Here, I will walk through the step-by-step process of calculating Cronbach's Alpha and Coefficient Omega using R. We'll use simulated data so it's easy to follow along (of course, you can apply these techniques to your own datasets).
-
-
 
 Before we start, we need to install (and load) the necessary packages.
 
@@ -167,27 +143,24 @@ Before we start, we need to install (and load) the necessary packages.
 
 ```
 
-Alternatively, 
+Alternatively,
 
 You could use the "pacman" package to easily install and load the packages above
 
 ```{r}
 
-#pacman::p_load(psych,lavaan,semTools,tidyverse)
+pacman::p_load(psych,lavaan,semTools,tidyverse,semTools,psych,tidyverse,lavaan)
 
 ```
-
-
 
 ## Loading the (BFI) dataset
 
 The Big Five Inventory (BFI) is a widely used dataset in personality psychology, measuring the five major dimensions of personality. We'll focus on the Openness trait for this tutorial.
 
-
 ```{r}
 
-# Load the psych package
-library(psych)
+# Make sure you've loaded the psych package
+
 
 # Load the BFI dataset
 data(bfi)
@@ -204,7 +177,6 @@ names(bfi)
 
 ```
 
-
 The dataset contains 2,800 participants with various demographic and personality-related variables. A1 to A5 correspond to items measuring the Openness trait.
 
 ### Selecting Openness Items
@@ -215,8 +187,6 @@ For this tutorial, we'll focus on five items measuring the Openness trait. These
 
 ```{r}
 
-library(tidyverse)
-
 # Select columns that contain "O" in their names and remove rows with NA values
 oppeness <- bfi %>%
   select(matches("^O")) %>%
@@ -226,14 +196,11 @@ head(oppeness)
 
 ```
 
-
 Each A variable represents a Likert-type item measuring Openness. Responses range from 1 to 6, treated as continuous variables for analysis.
-
 
 ### Handling Missing Data
 
 Before we continue, let's check any missing data.
-
 
 ```{r}
 
@@ -245,22 +212,9 @@ sum(is.na(oppeness))
 
 In this dataset, there are no missing values in the Openness items. If missing values were present, then we need to address that.
 
-
-We can remove the missing values like this. Note, since there's no missing values here, nothing to remove (but just letting you know).
-
-```{r}
-
-oppeness <- na.omit(oppeness)
-
-any(is.na(oppeness))
-
-```
-
-
 ## Calculating Cronbach's Alpha
 
 Recall that Cronbach's Alpha (α) is a measure of internal consistency that measures how closely related a set of items are as a group.
-
 
 ### a. We can use the psych Package in R
 
@@ -276,9 +230,7 @@ Recall that Cronbach's Alpha (α) is a measure of internal consistency that meas
 
 ```
 
-
-Because some items were negatively correlated with the first principal component, we probably 
-should reverse them.  
+Because some items were negatively correlated with the first principal component, we probably should reverse them.
 
 ```{r}
 
@@ -310,7 +262,6 @@ print(alpha_result)
 
 ```
 
-
 Explanation:
 
 raw_alpha: The Cronbach's Alpha coefficient.
@@ -327,12 +278,7 @@ ase: Asymptotic standard error.
 
 Confidence Intervals: Lower and upper bounds for alpha.
 
-
 As we can see, the Cronbach's Alpha for the Openness items is 0.6, indicating strong internal consistency. The average inter-item correlation is 0.24, moderate and within psychological scales.
-
-
-
-
 
 ## Confirmatory Factor Analysis (CFA)
 
@@ -351,13 +297,12 @@ openness =~ O1 + O2R + O3 + O4 + O5R
 
 ```
 
-
 ### b. Fitting the CFA Model
 
 Fit the Model Using lavaan:
 
 ```{r}
-library(lavaan)
+#pacman::p_load(lavaan)
 # Estimate model
 fit.one.f <- cfa(mod1f, data=oppeness, std.lv=T, missing='direct', 
              estimator='MLR')
@@ -370,14 +315,11 @@ summary(fit.one.f, fit.measures=T, standardized=T)
 
 ```
 
-
-
-
 Explanation:
 
-Estimator: Maximum Likelihood (ML). 
+Estimator: Maximum Likelihood (ML).
 
-Test Statistics: The Chi-square test is significant (𝑝<0.001), indicating a poor fit.
+Test Statistics: The Chi-square test is significant (𝑝\<0.001), indicating a poor fit.
 
 Fit Indices:
 
@@ -389,65 +331,31 @@ RMSEA (0.068): Indicates relatively weak fit (≥0.05).
 
 SRMR (0.029): Great fit (≤0.08).
 
-
-
 ```{r}
 
 residuals(fit.one.f, type='cor')
 
 ```
 
+The fit statistics from the Robust column in the summary suggest that this one-factor model provides a moderate fit to the data. While the Comparative Fit Index (CFI) of 0.94 indicates an acceptable fit, the Tucker-Lewis Index (TLI) of 0.88 is relatively lower, and the Root Mean Square Error of Approximation (RMSEA) is relatively high at 0.08.
 
-The fit statistics reported under the Robust column in the summary indicate that this one-factor model has a marginal fit to the data; although the CFI of .94 suggests adequate fit, the TLI of .88 is lower than desired, and the RMSEA is somewhat high at 0.08.
-
-These estimates of 𝜆̂ vary substantially (from .36 to.79), suggesting that tau equivalence is not tenable for this openness test and thus that ωu is a more appropriate reliability estimate than alpha.6 The ωu estimate can be obtained by executing the reliability function from the semTools package (i.e., semTools::reliability) on the fit1f one-factor model object:
-
-
-
-
+The factor loadings (𝜆̂) show significant variation, ranging from 0.357 to 0.792, which implies that the assumption of equal loadings (tau equivalence) does not hold for this openness test. As a result, omega (ωu) should be a more suitable measure of reliability than Cronbach's alpha. We can compute the ωu estimate by running the `reliability` function from the semTools package on the one-factor model object (`fit1f`).
 
 ```{r}
 
-library(semTools)
 reliability(fit.one.f)
 
 ```
 
-
-
-The results listed in the omega and omega2 rows give the ωu estimate in which the denominator equals the model-implied variance of the total score X, and the results listed in the omega3 row are based on a variation in which the denominator equals the observed, sample variance of X, as described earlier.
-
-The omega3 estimate is referred to as “hierarchical omega” in the help documentation for semTools::reliability (Jorgensen et al., 2020) and in Kelley and Pornprasertmanit (2016), whereas this Tutorial follows most of the psychometric literature (e.g., Rodriguez et al., 2016; Zinbarg et al., 2006) by reserving the term omega-hierarchical for estimates based on a bifactor model, which is presented later in this Tutorial.
-
-Kelley and Pornprasertmanit (2016) reviewed different approaches to constructing CIs around omega estimates, ultimately recommending bootstrapping.
-
-
-
-
-
+`omega` and `omega2` measure reliability based on the variance expected by the model, while `omega3` measures it based on the actual variance seen in your data. The small difference between `omega` and `omega3` suggests that the model's predictions of variance are somewhat close to what’s observed in the sample.
 
 ## Calculating Coefficient Omega
 
 Recall that Coefficient Omega (ω) is a reliability estimate that accounts for the factor structure of the test, providing a more accurate measure than Cronbach's Alpha, especially in the presence of multidimensionality or when tau-equivalence is violated.
 
-
 #Categorical omega
 
-Because the factor loadings estimated from polychoric correlations represent the associations between the factor and latent-response variables rather than the observed item responses themselves, applying the ωu formula presented 
-#earlier in this context would give the proportion of variance explained by the factor relative to the variance of the 
-#sum of the latent-response variables instead of the total variance of the sum of the observed item responses; 
-#that is, ωu would represent the reliability of a hypothetical, latent total score instead of the reliability of the 
-#actual observed total score. To remedy this issue, Green and Yang (2009b) developed an alternative reliability estimate 
-#that is rescaled into the observed total score metric. This reliability estimate for unidimensional categorical items 
-#is referred to as ωu-cat.
-
-#Yang and Green established that, compared with ωu, ωu-cat produces more accurate reliability estimates for total score 
-#X with ordinal item-level data, especially when the univariate item-response distributions differ across items.
-
-#Because the psychoticism items have a 4-point response scale, I fitted the one-factor model to the interitem 
-#polychoric correlations using WLSMV, a robust weighted least squares estimator that is recommended over the ML 
-#estimator for CFA with polychoric correlations (Finney & DiStefano, 2013).
-
+I fitted the one-factor model to the interitem polychoric correlations using WLSMV, a robust weighted least squares estimator that is recommended over the ML estimator for CFA with polychoric correlations.
 
 ```{r}
 # read in data
@@ -468,10 +376,6 @@ summary(fit.one.fCat, fit.measures=TRUE, standardized=TRUE)
 
 ```
 
-
-
-
-
 ```{r}
 #| echo: false
 #2 * 2
@@ -479,4 +383,3 @@ summary(fit.one.fCat, fit.measures=TRUE, standardized=TRUE)
 #The `echo: false` option disables the printing of code (only output is displayed).
 
 ```
-
