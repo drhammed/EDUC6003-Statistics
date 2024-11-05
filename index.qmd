@@ -5,7 +5,7 @@ format: html
 editor: visual
 ---
 
-# Chapter 1-
+# Chapter 1
 
 ## Introduction to Reliability Index Analysis
 
@@ -125,31 +125,13 @@ $\theta_i$ = Unique variance for item $i$
 
 ## Calculations in R
 
-Here, I will walk through the step-by-step process of calculating Cronbach's Alpha and Coefficient Omega using R. We'll use simulated data so it's easy to follow along (of course, you can apply these techniques to your own datasets).
+Here, I will walk through the step-by-step process of calculating Cronbach's Alpha and Coefficient Omega using R.
 
-Before we start, we need to install (and load) the necessary packages.
-
-```{r}
-
-# Install packages if not already installed (uncomment the code to run it)
-
-#install.packages(c("psych", "lavaan", "semTools", "tidyverse"))
-
-#Now, you can load the libraries
-#library(psych)
-#library(lavaan)
-#library(semTools)
-#library(tidyverse)
-
-```
-
-Alternatively,
-
-You could use the "pacman" package to easily install and load the packages above
+Load the necessary packages.
 
 ```{r}
 
-pacman::p_load(psych,lavaan,semTools,tidyverse,semTools,psych,tidyverse,lavaan)
+pacman::p_load(psych,lavaan,semTools,tidyverse,semTools,psych,tidyverse,lavaan,rio)
 
 ```
 
@@ -349,17 +331,18 @@ reliability(fit.one.f)
 
 `omega` and `omega2` measure reliability based on the variance expected by the model, while `omega3` measures it based on the actual variance seen in your data. The small difference between `omega` and `omega3` suggests that the model's predictions of variance are somewhat close to what’s observed in the sample.
 
-## Calculating Coefficient Omega
+## Calculating Categorical Omega
 
 Recall that Coefficient Omega (ω) is a reliability estimate that accounts for the factor structure of the test, providing a more accurate measure than Cronbach's Alpha, especially in the presence of multidimensionality or when tau-equivalence is violated.
 
-#Categorical omega
+Since factor loadings derived from polychoric correlations represent the link between the factor and the underlying latent response variables (not the actual responses from the items), using the ωu formula here would tell us how much of the variance in the latent response variables is explained by the factor. However, this doesn’t reflect the true variance in the sum of the observed item responses. Essentially, in this case, ωu would give us the reliability of a hypothetical total score based on the latent variables rather than the actual observed total score.
 
-I fitted the one-factor model to the interitem polychoric correlations using WLSMV, a robust weighted least squares estimator that is recommended over the ML estimator for CFA with polychoric correlations.
+To correct for this, Green and Yang (2009b) proposed a new reliability estimate called ωu-cat, which adjusts the reliability calculation to align with the observed total score. This estimate is more accurate for unidimensional scales with categorical items, especially when the response patterns vary across items.
+
+Since the psychoticism items use a 4-point rating scale, I fit the one-factor model using polychoric correlations and the WLSMV estimator (weighted least squares with mean and variance adjustment). This approach is recommended for confirmatory factor analysis involving polychoric correlations, as it is more robust than the maximum likelihood (ML) estimator.
 
 ```{r}
-# read in data
-library(rio)
+#load the data
 potic <- import("potic.csv")
 
 # Specify model
@@ -375,6 +358,29 @@ summary(fit.one.fCat, fit.measures=TRUE, standardized=TRUE)
 
 
 ```
+
+```{r}
+
+# Estimate reliability
+
+reliability(fit.one.fCat)
+
+
+```
+
+We can see that we have two estimates Cronbach’s alpha and differ a bit (0.80 & 0.77). The is because the 2nd alpha estimate is an example of ordinal alpha, which is calculated using a model based on polychoric correlations, while the first alpha was derived using the standard method based on product-moment covariances between the items. It's important to note that ordinal alpha measures the reliability of the sum of the continuous, latent-response variables rather than the observed categorical item responses. Additionally, it still assumes equal factor loadings (tau equivalence). Because of these limitations, I suggest disregarding the alpha value reported by semTools::reliability when the model uses polychoric correlations.
+
+The values shown in the `omega` and `omega2` rows represent the ωu-cat estimate. The `omega3` row shows a variation where the denominator uses the observed sample variance of ( X ). So, we can see ωu-cat estimates suggest that 79% of the variance in the total score for the psychoticism scale is explained by the single psychoticism factor.
+
+
+
+```{r}
+
+```
+
+
+
+
 
 ```{r}
 #| echo: false

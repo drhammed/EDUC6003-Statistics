@@ -176,7 +176,7 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#chapter-1-" id="toc-chapter-1-" class="nav-link active" data-scroll-target="#chapter-1-">Chapter 1-</a>
+  <li><a href="#chapter-1" id="toc-chapter-1" class="nav-link active" data-scroll-target="#chapter-1">Chapter 1</a>
   <ul class="collapse">
   <li><a href="#introduction-to-reliability-index-analysis" id="toc-introduction-to-reliability-index-analysis" class="nav-link" data-scroll-target="#introduction-to-reliability-index-analysis">Introduction to Reliability Index Analysis</a>
   <ul class="collapse">
@@ -202,7 +202,7 @@ window.Quarto = {
   <li><a href="#a.-specifying-the-cfa-model" id="toc-a.-specifying-the-cfa-model" class="nav-link" data-scroll-target="#a.-specifying-the-cfa-model">a. Specifying the CFA Model</a></li>
   <li><a href="#b.-fitting-the-cfa-model" id="toc-b.-fitting-the-cfa-model" class="nav-link" data-scroll-target="#b.-fitting-the-cfa-model">b. Fitting the CFA Model</a></li>
   </ul></li>
-  <li><a href="#calculating-coefficient-omega" id="toc-calculating-coefficient-omega" class="nav-link" data-scroll-target="#calculating-coefficient-omega">Calculating Coefficient Omega</a></li>
+  <li><a href="#calculating-categorical-omega" id="toc-calculating-categorical-omega" class="nav-link" data-scroll-target="#calculating-categorical-omega">Calculating Categorical Omega</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -235,8 +235,8 @@ window.Quarto = {
 </header>
 
 
-<section id="chapter-1-" class="level1">
-<h1>Chapter 1-</h1>
+<section id="chapter-1" class="level1">
+<h1>Chapter 1</h1>
 <section id="introduction-to-reliability-index-analysis" class="level2">
 <h2 class="anchored" data-anchor-id="introduction-to-reliability-index-analysis">Introduction to Reliability Index Analysis</h2>
 <p>This tutorial will serve as a Guide to Enhanced Reliability Estimation with R</p>
@@ -322,38 +322,25 @@ window.Quarto = {
 </section>
 <section id="calculations-in-r" class="level2">
 <h2 class="anchored" data-anchor-id="calculations-in-r">Calculations in R</h2>
-<p>Here, I will walk through the step-by-step process of calculating Cronbach’s Alpha and Coefficient Omega using R. We’ll use simulated data so it’s easy to follow along (of course, you can apply these techniques to your own datasets).</p>
-<p>Before we start, we need to install (and load) the necessary packages.</p>
+<p>Here, I will walk through the step-by-step process of calculating Cronbach’s Alpha and Coefficient Omega using R.</p>
+<p>Load the necessary packages.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install packages if not already installed (uncomment the code to run it)</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages(c("psych", "lavaan", "semTools", "tidyverse"))</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Now, you can load the libraries</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">#library(psych)</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">#library(lavaan)</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">#library(semTools)</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">#library(tidyverse)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Alternatively,</p>
-<p>You could use the “pacman” package to easily install and load the packages above</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(psych,lavaan,semTools,tidyverse,semTools,psych,tidyverse,lavaan)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(psych,lavaan,semTools,tidyverse,semTools,psych,tidyverse,lavaan,rio)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="loading-the-bfi-dataset" class="level2">
 <h2 class="anchored" data-anchor-id="loading-the-bfi-dataset">Loading the (BFI) dataset</h2>
 <p>The Big Five Inventory (BFI) is a widely used dataset in personality psychology, measuring the five major dimensions of personality. We’ll focus on the Openness trait for this tutorial.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Make sure you've loaded the psych package</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the BFI dataset</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(bfi)</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># load data file</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>bfi <span class="ot">&lt;-</span> bfi</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(bfi)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Make sure you've loaded the psych package</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the BFI dataset</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(bfi)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># load data file</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>bfi <span class="ot">&lt;-</span> bfi</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(bfi)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1] "A1"        "A2"        "A3"        "A4"        "A5"        "C1"       
  [7] "C2"        "C3"        "C4"        "C5"        "E1"        "E2"       
@@ -361,8 +348,8 @@ window.Quarto = {
 [19] "N4"        "N5"        "O1"        "O2"        "O3"        "O4"       
 [25] "O5"        "gender"    "education" "age"      </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># View the structure of the dataset</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#str(bfi)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># View the structure of the dataset</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#str(bfi)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The dataset contains 2,800 participants with various demographic and personality-related variables. A1 to A5 correspond to items measuring the Openness trait.</p>
 <section id="selecting-openness-items" class="level3">
@@ -371,12 +358,12 @@ window.Quarto = {
 <section id="a.-extracting-openness-items" class="level4">
 <h4 class="anchored" data-anchor-id="a.-extracting-openness-items">a. Extracting Openness Items</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select columns that contain "O" in their names and remove rows with NA values</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>oppeness <span class="ot">&lt;-</span> bfi <span class="sc">%&gt;%</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">matches</span>(<span class="st">"^O"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>()</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(oppeness)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select columns that contain "O" in their names and remove rows with NA values</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>oppeness <span class="ot">&lt;-</span> bfi <span class="sc">%&gt;%</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">matches</span>(<span class="st">"^O"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>()</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(oppeness)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  O1 O2 O3 O4 O5
 1  3  6  3  4  3
@@ -394,8 +381,8 @@ window.Quarto = {
 <h3 class="anchored" data-anchor-id="handling-missing-data">Handling Missing Data</h3>
 <p>Before we continue, let’s check any missing data.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check for missing values</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(oppeness))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check for missing values</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(oppeness))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0</code></pre>
 </div>
@@ -409,25 +396,25 @@ window.Quarto = {
 <section id="a.-we-can-use-the-psych-package-in-r" class="level3">
 <h3 class="anchored" data-anchor-id="a.-we-can-use-the-psych-package-in-r">a. We can use the psych Package in R</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate Cronbach's Alpha using the psych package</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">#alpha_result &lt;- psych::alpha(oppeness)</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the result</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co">#print(alpha_result)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate Cronbach's Alpha using the psych package</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#alpha_result &lt;- psych::alpha(oppeness)</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the result</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">#print(alpha_result)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Because some items were negatively correlated with the first principal component, we probably should reverse them.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reversing item O2 and O5</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>q <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"O2"</span>,<span class="st">"O5"</span>)</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>reverse <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  x.reversed <span class="ot">&lt;-</span> <span class="dv">7</span> <span class="sc">+</span><span class="dv">0</span> <span class="sc">-</span> x</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>oppeness[, <span class="fu">c</span>(<span class="st">"O2R"</span>, <span class="st">"O5R"</span>)] <span class="ot">&lt;-</span> <span class="fu">reverse</span>(oppeness[,<span class="fu">c</span>(<span class="st">"O2"</span>,<span class="st">"O5"</span>)])</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co"># compare original and reversed responses</span></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>oppeness[<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reversing item O2 and O5</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>q <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"O2"</span>,<span class="st">"O5"</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>reverse <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  x.reversed <span class="ot">&lt;-</span> <span class="dv">7</span> <span class="sc">+</span><span class="dv">0</span> <span class="sc">-</span> x</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>oppeness[, <span class="fu">c</span>(<span class="st">"O2R"</span>, <span class="st">"O5R"</span>)] <span class="ot">&lt;-</span> <span class="fu">reverse</span>(oppeness[,<span class="fu">c</span>(<span class="st">"O2"</span>,<span class="st">"O5"</span>)])</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co"># compare original and reversed responses</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>oppeness[<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  O1 O2 O3 O4 O5 O2R O5R
 1  3  6  3  4  3   1   4
@@ -440,12 +427,12 @@ window.Quarto = {
 </div>
 <p>Now, we can compute the alpha</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># compute alpha coefficient </span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>alpha_result <span class="ot">&lt;-</span> psych<span class="sc">::</span><span class="fu">alpha</span>(oppeness[, <span class="sc">-</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">5</span>)])</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the result</span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(alpha_result)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># compute alpha coefficient </span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>alpha_result <span class="ot">&lt;-</span> psych<span class="sc">::</span><span class="fu">alpha</span>(oppeness[, <span class="sc">-</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">5</span>)])</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the result</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(alpha_result)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Reliability analysis   
@@ -502,24 +489,24 @@ O5R 0.02 0.07 0.13 0.19 0.32 0.27    0</code></pre>
 <h3 class="anchored" data-anchor-id="a.-specifying-the-cfa-model">a. Specifying the CFA Model</h3>
 <p>Let’s specify a one-factor model where all items load on a single latent factor.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Specify model</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>mod1f <span class="ot">&lt;-</span> <span class="st">"</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="st">openness =~ O1 + O2R + O3 + O4 + O5R</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Specify model</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>mod1f <span class="ot">&lt;-</span> <span class="st">"</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="st">openness =~ O1 + O2R + O3 + O4 + O5R</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="b.-fitting-the-cfa-model" class="level3">
 <h3 class="anchored" data-anchor-id="b.-fitting-the-cfa-model">b. Fitting the CFA Model</h3>
 <p>Fit the Model Using lavaan:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">#pacman::p_load(lavaan)</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate model</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>fit.one.f <span class="ot">&lt;-</span> <span class="fu">cfa</span>(mod1f, <span class="at">data=</span>oppeness, <span class="at">std.lv=</span>T, <span class="at">missing=</span><span class="st">'direct'</span>, </span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">estimator=</span><span class="st">'MLR'</span>)</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co"># The results can be viewed using the summary</span></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit.one.f, <span class="at">fit.measures=</span>T, <span class="at">standardized=</span>T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">#pacman::p_load(lavaan)</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate model</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>fit.one.f <span class="ot">&lt;-</span> <span class="fu">cfa</span>(mod1f, <span class="at">data=</span>oppeness, <span class="at">std.lv=</span>T, <span class="at">missing=</span><span class="st">'direct'</span>, </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">estimator=</span><span class="st">'MLR'</span>)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co"># The results can be viewed using the summary</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit.one.f, <span class="at">fit.measures=</span>T, <span class="at">standardized=</span>T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>lavaan 0.6-19 ended normally after 22 iterations
 
@@ -626,7 +613,7 @@ Variances:
 <p>RMSEA (0.068): Indicates relatively weak fit (≥0.05).</p>
 <p>SRMR (0.029): Great fit (≤0.08).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">residuals</span>(fit.one.f, <span class="at">type=</span><span class="st">'cor'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">residuals</span>(fit.one.f, <span class="at">type=</span><span class="st">'cor'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$type
 [1] "cor.bollen"
@@ -647,7 +634,7 @@ $mean
 <p>The fit statistics from the Robust column in the summary suggest that this one-factor model provides a moderate fit to the data. While the Comparative Fit Index (CFI) of 0.94 indicates an acceptable fit, the Tucker-Lewis Index (TLI) of 0.88 is relatively lower, and the Root Mean Square Error of Approximation (RMSEA) is relatively high at 0.08.</p>
 <p>The factor loadings (𝜆̂) show significant variation, ranging from 0.357 to 0.792, which implies that the assumption of equal loadings (tau equivalence) does not hold for this openness test. As a result, omega (ωu) should be a more suitable measure of reliability than Cronbach’s alpha. We can compute the ωu estimate by running the <code>reliability</code> function from the semTools package on the one-factor model object (<code>fit1f</code>).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">reliability</span>(fit.one.f)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">reliability</span>(fit.one.f)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>        openness
 alpha  0.6025464
@@ -660,26 +647,26 @@ avevar 0.2484010</code></pre>
 <p><code>omega</code> and <code>omega2</code> measure reliability based on the variance expected by the model, while <code>omega3</code> measures it based on the actual variance seen in your data. The small difference between <code>omega</code> and <code>omega3</code> suggests that the model’s predictions of variance are somewhat close to what’s observed in the sample.</p>
 </section>
 </section>
-<section id="calculating-coefficient-omega" class="level2">
-<h2 class="anchored" data-anchor-id="calculating-coefficient-omega">Calculating Coefficient Omega</h2>
+<section id="calculating-categorical-omega" class="level2">
+<h2 class="anchored" data-anchor-id="calculating-categorical-omega">Calculating Categorical Omega</h2>
 <p>Recall that Coefficient Omega (ω) is a reliability estimate that accounts for the factor structure of the test, providing a more accurate measure than Cronbach’s Alpha, especially in the presence of multidimensionality or when tau-equivalence is violated.</p>
-<p>#Categorical omega</p>
-<p>I fitted the one-factor model to the interitem polychoric correlations using WLSMV, a robust weighted least squares estimator that is recommended over the ML estimator for CFA with polychoric correlations.</p>
+<p>Since factor loadings derived from polychoric correlations represent the link between the factor and the underlying latent response variables (not the actual responses from the items), using the ωu formula here would tell us how much of the variance in the latent response variables is explained by the factor. However, this doesn’t reflect the true variance in the sum of the observed item responses. Essentially, in this case, ωu would give us the reliability of a hypothetical total score based on the latent variables rather than the actual observed total score.</p>
+<p>To correct for this, Green and Yang (2009b) proposed a new reliability estimate called ωu-cat, which adjusts the reliability calculation to align with the observed total score. This estimate is more accurate for unidimensional scales with categorical items, especially when the response patterns vary across items.</p>
+<p>Since the psychoticism items use a 4-point rating scale, I fit the one-factor model using polychoric correlations and the WLSMV estimator (weighted least squares with mean and variance adjustment). This approach is recommended for confirmatory factor analysis involving polychoric correlations, as it is more robust than the maximum likelihood (ML) estimator.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># read in data</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rio)</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>potic <span class="ot">&lt;-</span> <span class="fu">import</span>(<span class="st">"potic.csv"</span>)</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Specify model</span></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>mod.one.fCat <span class="ot">&lt;-</span> <span class="st">'psyctcsm =~ DDP1 + DDP2 +</span></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="st">DDP3 + DDP4'</span></span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate model</span></span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>fit.one.fCat <span class="ot">&lt;-</span> <span class="fu">cfa</span>(mod.one.fCat, <span class="at">data=</span>potic, <span class="at">std.lv=</span><span class="cn">TRUE</span>, <span class="at">ordered=</span>T, <span class="at">estimator=</span><span class="st">'WLSMV'</span>)</span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Retrieving the results</span></span>
-<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit.one.fCat, <span class="at">fit.measures=</span><span class="cn">TRUE</span>, <span class="at">standardized=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co">#load the data</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>potic <span class="ot">&lt;-</span> <span class="fu">import</span>(<span class="st">"potic.csv"</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Specify model</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>mod.one.fCat <span class="ot">&lt;-</span> <span class="st">'psyctcsm =~ DDP1 + DDP2 +</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="st">DDP3 + DDP4'</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate model</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>fit.one.fCat <span class="ot">&lt;-</span> <span class="fu">cfa</span>(mod.one.fCat, <span class="at">data=</span>potic, <span class="at">std.lv=</span><span class="cn">TRUE</span>, <span class="at">ordered=</span>T, <span class="at">estimator=</span><span class="st">'WLSMV'</span>)</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Retrieving the results</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit.one.fCat, <span class="at">fit.measures=</span><span class="cn">TRUE</span>, <span class="at">standardized=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>lavaan 0.6-19 ended normally after 10 iterations
 
@@ -775,6 +762,25 @@ Variances:
     psyctcsm          1.000                               1.000    1.000</code></pre>
 </div>
 </div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate reliability</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="fu">reliability</span>(fit.one.fCat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>For constructs with categorical indicators, Zumbo et al.`s (2007) "ordinal alpha" is calculated in addition to the standard alpha, which treats ordinal variables as numeric. See Chalmers (2018) for a critique of "alpha.ord" and the response by Zumbo &amp; Kroc (2019). Likewise, average variance extracted is calculated from polychoric (polyserial) not Pearson correlations.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           psyctcsm
+alpha     0.7680870
+alpha.ord 0.8007496
+omega     0.7902953
+omega2    0.7902953
+omega3    0.7932682
+avevar    0.5289638</code></pre>
+</div>
+</div>
+<p>We can see that we have two estimates Cronbach’s alpha and differ a bit (0.80 &amp; 0.77). The is because the 2nd alpha estimate is an example of ordinal alpha, which is calculated using a model based on polychoric correlations, while the first alpha was derived using the standard method based on product-moment covariances between the items. It’s important to note that ordinal alpha measures the reliability of the sum of the continuous, latent-response variables rather than the observed categorical item responses. Additionally, it still assumes equal factor loadings (tau equivalence). Because of these limitations, I suggest disregarding the alpha value reported by semTools::reliability when the model uses polychoric correlations.</p>
+<p>The values shown in the <code>omega</code> and <code>omega2</code> rows represent the ωu-cat estimate. The <code>omega3</code> row shows a variation where the denominator uses the observed sample variance of ( X ). So, we can see ωu-cat estimates suggest that 79% of the variance in the total score for the psychoticism scale is explained by the single psychoticism factor.</p>
 
 
 </section>
