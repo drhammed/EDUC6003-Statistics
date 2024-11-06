@@ -176,7 +176,7 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#chapter-1" id="toc-chapter-1" class="nav-link active" data-scroll-target="#chapter-1">Chapter 1</a>
+  <li><a href="#chapter-1--reliability-index-analysis" id="toc-chapter-1--reliability-index-analysis" class="nav-link active" data-scroll-target="#chapter-1--reliability-index-analysis">Chapter 1- Reliability Index Analysis</a>
   <ul class="collapse">
   <li><a href="#introduction-to-reliability-index-analysis" id="toc-introduction-to-reliability-index-analysis" class="nav-link" data-scroll-target="#introduction-to-reliability-index-analysis">Introduction to Reliability Index Analysis</a>
   <ul class="collapse">
@@ -209,6 +209,7 @@ window.Quarto = {
   <li><a href="#higher-order-models" id="toc-higher-order-models" class="nav-link" data-scroll-target="#higher-order-models">Higher-Order Models</a></li>
   </ul></li>
   <li><a href="#exploratory-omega-estimates" id="toc-exploratory-omega-estimates" class="nav-link" data-scroll-target="#exploratory-omega-estimates">Exploratory Omega Estimates</a></li>
+  <li><a href="#simple-linear-regression-slr" id="toc-simple-linear-regression-slr" class="nav-link" data-scroll-target="#simple-linear-regression-slr">Simple Linear Regression (SLR)</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -241,8 +242,8 @@ window.Quarto = {
 </header>
 
 
-<section id="chapter-1" class="level1">
-<h1>Chapter 1</h1>
+<section id="chapter-1--reliability-index-analysis" class="level1">
+<h1>Chapter 1- Reliability Index Analysis</h1>
 <section id="introduction-to-reliability-index-analysis" class="level2">
 <h2 class="anchored" data-anchor-id="introduction-to-reliability-index-analysis">Introduction to Reliability Index Analysis</h2>
 <p>This tutorial will serve as a Guide to Enhanced Reliability Estimation with R</p>
@@ -1335,6 +1336,27 @@ Omega total for total scores and subscales    0.98 0.94 0.90 0.92 0.9
 Omega general for total scores and subscales  0.85 0.69 0.52 0.76 0.7
 Omega group for total scores and subscales    0.08 0.25 0.38 0.16 0.2</code></pre>
 </div>
+</div>
+<p>The results from the exploratory factor analysis indicate that the four-factor model provides a strong fit, with an overall omega total of 0.98, suggesting excellent reliability for the total score. The omega hierarchical value of 0.85 indicates that 85% of the total-score variance is attributable to a general factor, showing that the general psychological cost factor plays a dominant role in explaining the variance across items. Additionally, the individual subscales also show good reliability, with their omega total values ranging from 0.90 to 0.94.</p>
+<p>#Chapter 2- Regression</p>
+</section>
+<section id="simple-linear-regression-slr" class="level2">
+<h2 class="anchored" data-anchor-id="simple-linear-regression-slr">Simple Linear Regression (SLR)</h2>
+<p>Linear model and Linear regression are technically synonyms and we often use either terms when quantifying the effect of a “<strong>continuous”</strong> independent variable on a”<strong>continuous”</strong> dependent variable. The difference between this and ANOVA is that <strong>ANOVA</strong> is usually used when quantifying the effect of a “<strong>discrete (or categorical)”</strong> independent variable on a”<strong>continuous”</strong> dependent variable. So, it is important to note that- <em>ANOVA is also a linear regression!</em> In fact, if you run “anova” function on linear model object, you’ll most likely get the same p-value.</p>
+<p><strong>Regression</strong> generally refers to the fact that we are quantifying the relationship between a response variable and (one or more) predictor variables. In the case of <strong>SLR</strong>, both the response and the predictor are <em>numeric</em> variables and we are using a single predictor (independent) variable. Later we will use multiple predictor variables (multiple regression). Also, this models tells us that our model for Y is a linear combination of the predictors X. (In this case just one predictor)! For now, this always results in a model that is a line, but this is not always the case (and we may see this later on in the tutorial).</p>
+<p>Like ANOVA, in SLR, we often talk about the assumptions that this model makes. This include-</p>
+<ol type="1">
+<li>Linearity- the relationship between Y and x is linear, of the form <span class="math inline">\(\beta_0 + \beta_1x\)</span>.</li>
+<li>Independent. The errors <span class="math inline">\(\epsilon\)</span> are independent.</li>
+<li>Normality. The errors, <span class="math inline">\(\epsilon\)</span> are normally distributed. I.e. the “error” around the line follows a normal distribution.</li>
+<li>Equality of Variance. At each value of x, the variance of Y is the same.</li>
+</ol>
+<p>To learn extensively about the model assumptions, you may want to check this invited lecture I gave last Winter. <a href="https://drhammed.github.io/Biol322_2024_lecture/#2">Testing Model Assumptions</a>.</p>
+<p>For this lab, we will be using a year dataset on Corvettes sales in Virginia Beach, Virginia. Using this data, ten Corvettes (between 1 and 6yrs old) were randomly selected and the below data shows the sales price (in hundreds of dollars) denoted by y and the age (in years) denoted by x.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/Corvettes-01.PNG" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
 </div>
 
 

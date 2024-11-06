@@ -490,16 +490,8 @@ omega(pcs, nfactors = 4, plot = F)
 
 The results from the exploratory factor analysis indicate that the four-factor model provides a strong fit, with an overall omega total of 0.98, suggesting excellent reliability for the total score. The omega hierarchical value of 0.85 indicates that 85% of the total-score variance is attributable to a general factor, showing that the general psychological cost factor plays a dominant role in explaining the variance across items. Additionally, the individual subscales also show good reliability, with their omega total values ranging from 0.90 to 0.94.
 
-#Chapter 2- Linear Model
+#Chapter 2- Regression
 
-To learn about model diagnostics, you may want to check this invited lecture I gave last Winter. [Testing Model Assumptions](https://drhammed.github.io/Biol322_2024_lecture/#2).
+## Simple Linear Regression (SLR)
 
-
-
-```{r}
-#| echo: false
-#2 * 2
-
-#The `echo: false` option disables the printing of code (only output is displayed).
-
-```
+Linear model and Linear regression are technicall
