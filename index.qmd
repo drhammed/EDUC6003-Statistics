@@ -490,8 +490,55 @@ omega(pcs, nfactors = 4, plot = F)
 
 The results from the exploratory factor analysis indicate that the four-factor model provides a strong fit, with an overall omega total of 0.98, suggesting excellent reliability for the total score. The omega hierarchical value of 0.85 indicates that 85% of the total-score variance is attributable to a general factor, showing that the general psychological cost factor plays a dominant role in explaining the variance across items. Additionally, the individual subscales also show good reliability, with their omega total values ranging from 0.90 to 0.94.
 
-#Chapter 2- Regression
+# Chapter 2- Regression
 
 ## Simple Linear Regression (SLR)
 
-Linear model and Linear regression are technicall
+Linear model and Linear regression are technically synonyms and we often use either terms when quantifying the effect of a "**continuous"** independent variable on a"**continuous"** dependent variable. The difference between this and ANOVA is that **ANOVA** is usually used when quantifying the effect of a "**discrete (or categorical)"** independent variable on a"**continuous"** dependent variable. So, it is important to note that- *ANOVA is also a linear regression!* In fact, if you run "anova" function on linear model object, you'll most likely get the same p-value.
+
+**Regression** generally refers to the fact that we are quantifying the relationship between a response variable and (one or more) predictor variables. In the case of **SLR**, both the response and the predictor are *numeric* variables and we are using a single predictor (independent) variable. Later we will use multiple predictor variables (multiple regression). Also, this models tells us that our model for Y is a linear combination of the predictors X. (In this case just one predictor)! For now, this always results in a model that is a line, but this is not always the case (and we may see this later on in the tutorial).
+
+Like ANOVA, in SLR, we often talk about the assumptions that this model makes. This include-
+
+1.  Linearity- the relationship between Y and x is linear, of the form $\beta_0 + \beta_1x$.
+2.  Independent. The errors $\epsilon$ are independent.
+3.  Normality. The errors, $\epsilon$ are normally distributed. I.e. the "error" around the line follows a normal distribution.
+4.  Equality of Variance. At each value of x, the variance of Y is the same.
+
+To learn extensively about the model assumptions, you may want to check this invited lecture I gave last Winter. [Testing Model Assumptions](https://drhammed.github.io/Biol322_2024_lecture/#2).
+
+
+For this lab, we will be using a year dataset on Corvettes sales in Virginia Beach, Virginia. Using this data, ten Corvettes (between 1 and 6yrs old) were randomly selected and the below data shows the sales price (in hundreds of dollars) denoted by y and the age (in years) denoted by x.
+
+
+![](images/Corvettes-01.PNG){fig-align="center"}
+
+
+
+#### Tasks
+
+1.  Graph the data in a scatterplot to determine if there is a possible linear relationship.
+2.  Compute and interpret the linear correlation coefficient, r.
+3.  Determine the regression equation for the data.
+4.  Graph the regression equation and the data points.
+5.  Identify outliers and potential influential observations.
+6.  Compute and interpret the coefficient of determination, r2.
+7.  Obtain the residuals and create a residual plot. Decide whether it is reasonable to consider that the assumptions for regression analysis are met by the variables in questions.
+8.  At the 5% significance level, do the data provide sufficient evidence to conclude that the slope of the population regression line is not 0 and, hence, that age is useful as a predictor of sales price for Corvettes?
+9.  Obtain and interpret a 95% confidence interval for the slope, β, of the population regression line that relates age to sales price for Corvettes.
+10. Obtain a point estimate for the mean sales price of all 4-year-old Corvettes.
+11. Determine a 95% confidence interval for the mean sales price of all 4-year-old Corvettes.
+12. Find the predicted sales price of Jack Smith's 4-year-old Corvette.
+13. Determine a 95% prediction interval for the sales price of Jack Smith's 4-year-old Corvette.
+
+This is the [link](https://drive.google.com/drive/folders/1nb1zgxr_IIV9271-BWmffmMSukOYf3ja?usp=sharing) to the main google drive folder for all the data to complete this tutorial!
+
+
+
+```{r}
+#| echo: false
+#2 * 2
+
+#The `echo: false` option disables the printing of code (only output is displayed).
+
+```

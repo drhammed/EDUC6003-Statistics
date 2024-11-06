@@ -209,6 +209,9 @@ window.Quarto = {
   <li><a href="#higher-order-models" id="toc-higher-order-models" class="nav-link" data-scroll-target="#higher-order-models">Higher-Order Models</a></li>
   </ul></li>
   <li><a href="#exploratory-omega-estimates" id="toc-exploratory-omega-estimates" class="nav-link" data-scroll-target="#exploratory-omega-estimates">Exploratory Omega Estimates</a></li>
+  </ul></li>
+  <li><a href="#chapter-2--regression" id="toc-chapter-2--regression" class="nav-link" data-scroll-target="#chapter-2--regression">Chapter 2- Regression</a>
+  <ul class="collapse">
   <li><a href="#simple-linear-regression-slr" id="toc-simple-linear-regression-slr" class="nav-link" data-scroll-target="#simple-linear-regression-slr">Simple Linear Regression (SLR)</a></li>
   </ul></li>
   </ul>
@@ -663,7 +666,7 @@ avevar 0.2484010</code></pre>
 <p>Since the psychoticism items use a 4-point rating scale, I fit the one-factor model using polychoric correlations and the WLSMV estimator (weighted least squares with mean and variance adjustment). This approach is recommended for confirmatory factor analysis involving polychoric correlations, as it is more robust than the maximum likelihood (ML) estimator.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co">#load the data</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>potic <span class="ot">&lt;-</span> <span class="fu">import</span>(<span class="st">"potic.csv"</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>potic <span class="ot">&lt;-</span> <span class="fu">import</span>(<span class="st">"data/potic.csv"</span>)</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Specify model</span></span>
 <span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>mod.one.fCat <span class="ot">&lt;-</span> <span class="st">'psyctcsm =~ DDP1 + DDP2 +</span></span>
@@ -799,7 +802,7 @@ avevar    0.5289638</code></pre>
 <p>When data fits well with a bifactor model, a reliability metric called <strong>omega hierarchical (</strong><span class="math inline">\(ω_h\)</span>) is used. This measure reflects how much of the total score’s variance is attributable to the single general factor, even though the data involves multiple dimensions.</p>
 <p>Here, let’s demonstrate the estimation of <span class="math inline">\(ω_h\)</span> using R, I use data that from Flake, Ferland, &amp; Flora, 2017 collected by administering the PCS to 154 students in an introductory statistics course.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>pcs <span class="ot">&lt;-</span> <span class="fu">import</span>(<span class="st">"pcs.csv"</span>)</span>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>pcs <span class="ot">&lt;-</span> <span class="fu">import</span>(<span class="st">"data/pcs.csv"</span>)</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(pcs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1] "TE1"  "TE2"  "TE3"  "TE4"  "TE5"  "OE1"  "OE2"  "OE3"  "OE4"  "LVA1"
@@ -1338,8 +1341,10 @@ Omega group for total scores and subscales    0.08 0.25 0.38 0.16 0.2</code></pr
 </div>
 </div>
 <p>The results from the exploratory factor analysis indicate that the four-factor model provides a strong fit, with an overall omega total of 0.98, suggesting excellent reliability for the total score. The omega hierarchical value of 0.85 indicates that 85% of the total-score variance is attributable to a general factor, showing that the general psychological cost factor plays a dominant role in explaining the variance across items. Additionally, the individual subscales also show good reliability, with their omega total values ranging from 0.90 to 0.94.</p>
-<p>#Chapter 2- Regression</p>
 </section>
+</section>
+<section id="chapter-2--regression" class="level1">
+<h1>Chapter 2- Regression</h1>
 <section id="simple-linear-regression-slr" class="level2">
 <h2 class="anchored" data-anchor-id="simple-linear-regression-slr">Simple Linear Regression (SLR)</h2>
 <p>Linear model and Linear regression are technically synonyms and we often use either terms when quantifying the effect of a “<strong>continuous”</strong> independent variable on a”<strong>continuous”</strong> dependent variable. The difference between this and ANOVA is that <strong>ANOVA</strong> is usually used when quantifying the effect of a “<strong>discrete (or categorical)”</strong> independent variable on a”<strong>continuous”</strong> dependent variable. So, it is important to note that- <em>ANOVA is also a linear regression!</em> In fact, if you run “anova” function on linear model object, you’ll most likely get the same p-value.</p>
@@ -1358,8 +1363,99 @@ Omega group for total scores and subscales    0.08 0.25 0.38 0.16 0.2</code></pr
 <p><img src="images/Corvettes-01.PNG" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
 </figure>
 </div>
+<section id="tasks" class="level4">
+<h4 class="anchored" data-anchor-id="tasks">Tasks</h4>
+<ol type="1">
+<li>Graph the data in a scatterplot to determine if there is a possible linear relationship.</li>
+<li>Compute and interpret the linear correlation coefficient, r.</li>
+<li>Determine the regression equation for the data.</li>
+<li>Graph the regression equation and the data points.</li>
+<li>Identify outliers and potential influential observations.</li>
+<li>Compute and interpret the coefficient of determination, r2.</li>
+<li>Obtain the residuals and create a residual plot. Decide whether it is reasonable to consider that the assumptions for regression analysis are met by the variables in questions.</li>
+<li>At the 5% significance level, do the data provide sufficient evidence to conclude that the slope of the population regression line is not 0 and, hence, that age is useful as a predictor of sales price for Corvettes?</li>
+<li>Obtain and interpret a 95% confidence interval for the slope, β, of the population regression line that relates age to sales price for Corvettes.</li>
+<li>Obtain a point estimate for the mean sales price of all 4-year-old Corvettes.</li>
+<li>Determine a 95% confidence interval for the mean sales price of all 4-year-old Corvettes.</li>
+<li>Find the predicted sales price of Jack Smith’s 4-year-old Corvette.</li>
+<li>Determine a 95% prediction interval for the sales price of Jack Smith’s 4-year-old Corvette.</li>
+</ol>
+<p>This is the <a href="https://drive.google.com/drive/folders/1nb1zgxr_IIV9271-BWmffmMSukOYf3ja?usp=sharing">link</a> to the main google drive folder for all the data to complete this tutorial!</p>
+<p>To start, we need to load in the packages and data</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(ggplot2,dplyr)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Load data</span></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data/corvettes.csv"</span>)</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename columns ( x = Age and y = Price)</span></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">Age =</span> x, <span class="at">Price =</span> y)</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a><span class="co">#check the first few rows</span></span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Age Price
+1   6 12500
+2   6 11500
+3   6 13000
+4   4 16000
+5   2 21900
+6   5 15000</code></pre>
+</div>
+</div>
+<p><strong>1: Graph the Data in a Scatterplot</strong> Let’s create a scatterplot to visualize the relationship between Age and SalesPrice. Assuming these are the relevant columns, update the column names if needed.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Scatterplot of Age vs. SalesPrice</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> Age, <span class="at">y =</span> Price)) <span class="sc">+</span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Scatterplot of Age vs. Sales Price"</span>, <span class="at">x =</span> <span class="st">"Age"</span>, <span class="at">y =</span> <span class="st">"Price"</span>) <span class="sc">+</span></span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Interpretation- The points seem to follow a linear pattern, although with a negative relationship.</p>
+<p><strong>2: Compute and Interpret the Linear Correlation Coefficient</strong></p>
+<p>The Pearson Correlation is a statistical method that calculates the strength and direction of linear relationships between continuous variables. It produces a sample correlation coefficient, r, which can be used to evaluate whether there is a linear relationship among the same variables in the population. This population correlation coefficient is represented by ρ (“rho”) and is a parametric measure.</p>
+<pre><code>Pearson correlation indicates:
+
+-   Whether there is a statistically significant linear relationship between two continuous variables
+
+-   It also shows the strength of this linear relationship (i.e., how close the relationship is to being a perfectly straight line)
+
+-   Finally, it reveals the direction of this linear relationship (increasing or decreasing)
+
+It is however important to note that Pearson Correlation cannot address non-linear relationships or relationships among categorical variables. To address relationships that involve categorical variables and/or non-linear relationships, you need to consider the equivalent non-parametric test (e.g., Spearman's rank correlation).
+
+Also, while Pearson Correlation reveals *associations* among (continuous) variables, you should remember that "*Correlation* *does not imply causation,*" no matter how large the correlation coefficient is.</code></pre>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute correlation</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>df_cor <span class="ot">&lt;-</span> <span class="fu">cor</span>(df<span class="sc">$</span>Age, df<span class="sc">$</span>Price)</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Age Price
+1    6 12500
+2    6 11500
+3    6 13000
+4    4 16000
+5    2 21900
+6    5 15000
+7    4 19000
+8    5 16300
+9    1 26000
+10   2 26000</code></pre>
+</div>
+</div>
+<pre><code>**Interpretation**- The correlation coefficient is **-0.968**. This r-value indicates a robust negative linear correlation, given its proximity to -1 and negative sign. This strong negative linear correlation suggests that data points should closely cluster around a downward-sloping regression line, (*which aligns with the graph above*). Consequently, the presence of a strong negative linear relationship between Age and Price supports the continuation of linear regression analysis.</code></pre>
 
 
+</section>
 </section>
 </section>
 
