@@ -546,7 +546,7 @@ head(df)
 
 ```
 
-**1: Graph the Data in a Scatterplot** Let's create a scatterplot to visualize the relationship between Age and SalesPrice. Assuming these are the relevant columns, update the column names if needed.
+**1: Graph the Data in a Scatterplot** Let's create a scatterplot to visualize the relationship between Age and SalesPrice.
 
 ```{r}
 
