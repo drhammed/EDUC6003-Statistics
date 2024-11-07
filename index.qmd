@@ -679,7 +679,7 @@ ggplot(df, aes(x = Age, y = residuals)) +
 
 We can also check the assumption of constant variance using the Breusch-Pagan Test.
 
-The $H_0$ and $H_A$ can be considered to be:
+The $H_0$ and $H_a$ can be considered to be:
 
 $H_0$ : Homoscedasticity. The errors have constant variance about the true model.
 
