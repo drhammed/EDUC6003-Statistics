@@ -1678,6 +1678,7 @@ Now, we can verify if this actually reduced the multicollinearity
 
 ```{r}
 # Check the correlations after mean centering
+
 cor_mat_centered <- data_centering %>%
   dplyr::select(social_support_c, work_experience_c, socialXexperience_c) %>%
   as.matrix() %>%
@@ -1685,6 +1686,7 @@ cor_mat_centered <- data_centering %>%
 
 # Display the centered correlation matrix
 cor_mat_centered
+
 
 ```
 
