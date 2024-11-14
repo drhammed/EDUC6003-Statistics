@@ -224,6 +224,7 @@ window.Quarto = {
   <li><a href="#variation-decomposition" id="toc-variation-decomposition" class="nav-link" data-scroll-target="#variation-decomposition">Variation Decomposition</a></li>
   <li><a href="#coefficient-of-determination" id="toc-coefficient-of-determination" class="nav-link" data-scroll-target="#coefficient-of-determination">Coefficient of Determination</a></li>
   </ul></li>
+  <li><a href="#chapter-5---mediation-and-moderation-analysis" id="toc-chapter-5---mediation-and-moderation-analysis" class="nav-link" data-scroll-target="#chapter-5---mediation-and-moderation-analysis">Chapter 5 - Mediation and Moderation Analysis</a></li>
   </ul>
 </nav>
     </div>
@@ -2036,9 +2037,19 @@ F-statistic: 815.6 on 2 and 387 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
 <p>Interpretation- From our example dataset, our calculated <span class="math inline">\(R^2\)</span> = 0.65. Thus, we can conclude that 65% of the observed variation in stopping distance can be explained by the linear relationship with speed.</p>
-
-
 </section>
+</section>
+<section id="chapter-5---mediation-and-moderation-analysis" class="level1">
+<h1>Chapter 5 - Mediation and Moderation Analysis</h1>
+<p>In many cases, the relationship we want to explore extend beyond a simple pair of variables interacting with each other. Often, additional elements may shape the dynamics of these relationships. For example, there might be underlying factors that modify how two variables are connected or provide reasons for their association. These questions are important for a deeper understanding but cannot be addressed using the basic methods like a simple linear regression, for example. Those methods were limited to examining the direct effect between two variables (say X and Y) without the flexibility to incorporate extra factors that might be at play.</p>
+<p>Moderation and mediation analyses allow us to incorporate one or more additional variables into our models, giving us a more comprehensive view of how various factors might influence the relationship between two primary variables. In a very basic way, moderation and mediation introduce an extra variable to the existing relationship. While it is possible to include multiple moderating or mediating variables, it is generally less common due to the added complexity and the challen ges associated with interpreting such complex models. When adding a single additional variable, these methods help us address specific questions:</p>
+<ul>
+<li><p><strong>Moderation:</strong> How does the strength or direction of the relationship between variables X and Y change at different levels of a third variable, Z?</p></li>
+<li><p><strong>Mediation:</strong> Does a third aditional variable, Z, serve as a mechanism through which X influences Y?</p></li>
+</ul>
+<p>In this tutorial, we will cover the application of both moderation and mediation analyses using R. Essentially, you will learn the steps to perform these analyses, as well as how to interpret the outcomes.</p>
+
+
 </section>
 
 </main> <!-- /main -->

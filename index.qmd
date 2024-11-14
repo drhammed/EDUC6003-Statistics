@@ -1281,10 +1281,112 @@ Interpretation- From our example dataset, our calculated $R^2$ = 0.65. Thus, we 
 
 
 
-```{r}
-#| echo: false
-#2 * 2
 
-#The `echo: false` option disables the printing of code (only output is displayed).
+
+# Chapter 5 - Moderation and Mediation Analysis
+
+## Moderation
+
+
+In many cases, the relationship we want to explore extend beyond a simple pair of variables interacting with each other. Often, additional elements may shape the dynamics of these relationships. For example, there might be underlying factors that modify how two variables are connected or provide reasons for their association. These questions are important for a deeper understanding but cannot be addressed using the basic methods like a simple linear regression, for example. Those methods were limited to examining the direct effect between two variables (say X and Y) without the flexibility to incorporate extra factors that might be at play.
+
+Moderation and mediation analyses allow us to incorporate one or more additional variables into our models, giving us a more comprehensive view of how various factors might influence the relationship between two primary variables. In a very basic way, moderation and mediation introduce an extra variable to the existing relationship. While it is possible to include multiple moderating or mediating variables, it is generally less common due to the added complexity and the challen
+ges associated with interpreting such complex models. When adding a single additional variable, these methods help us address specific questions:
+
+- **Moderation:** How does the strength or direction of the relationship between variables X and Y change at different levels of a third variable, M?
+
+- **Mediation:** Does a third aditional variable, M, serve as a mechanism through which X influences Y?
+
+In this tutorial, we will cover the application of both moderation and mediation analyses using R. Essentially, you will learn the steps to perform these analyses, as well as how to interpret the outcomes.
+
+
+
+## Understanding Moderation in Statistical Analysis
+
+Moderation examines how the relationship between two variables is influenced by a third variable. Specifically, it assesses the extent to which the impact of one variable on another varies depending on the level or presence of an additional variable.
+
+**Assumptions Regarding the Dependent Variable:** 
+
+Moderation analysis relies on linear regression techniques, so the outcome variable should be **continuous**. Also, the predictors in the model can be either continuous or categorical (binary).
+
+As with regression analysis, there are assumptions that are quite important here:
+
+- **Linearity:** A crucial assumption for moderation is that the interaction between the variables is linear. This implies that the effect of the independent variable (X) on the dependent variable (Y) changes at a consistent rate as the moderator variable (M) increases or decreases. Moreover, the primary relationship between X and Y should also be **linear**. Ensuring both the moderation effect and the original relationship are linear is essential for accurate interpretation.
+
+- **Other Assumptions:** Beyond linearity, moderation shares the same assumptions as multiple regression, such as homoscedasticity, independence of errors, and normality of residuals.
+
+So, essentially, moderation analysis allows us to determine whether the relationship between two variables is shaped by a third variable. For accurate interpretation, both the moderation effect and the direct relationship between the primary variables should show linearity. Aside from this, moderation operates under the standard assumptions of multiple regression.
+
+When we say that a moderator influences the relationship between two other variables, we mean that the nature or strength of that relationship changes based on the level or category of the moderator. In other words, the relationship between X and Y isn't uniform across all conditions but varies with moderator M.
+
+
+
+
+
+### Exploring Moderation and Its Relationship to Interaction
+
+As in any statistical models, we have to evaluate moderation effects through statistical methods. Ideally, if you visualize the relationship between two variables across different levels of a moderator and notice that the regression lines are not parallel, this indicates **moderation**. Why is that? Parallel lines suggest that the relationship between the two primary variables remains constant regardless of the moderator's level, meaning the moderator doesn't influence the relationship. However, if the lines have different slopes, it signifies that the strength or direction of the relationship changes depending on the moderator.
+
+
+![Moderation Effect Plot](images/interaction_1.png){fig-align="center"}
+
+
+You might have heard of **interaction** terms before? This is technically the same logic. We say we have *interaction* when the effect of one variable on an outcome depends on the level of another variable. Essentially, this is what we're observing with moderation. In fact, we call the graph illustrating non-parallel slopes as an "interaction plot" rather than a "moderation plot." So, how do moderation and interaction differ?
+
+I'd say the distinction between moderation and interaction is subtle and primarily lies in their interpretation rather than their mathematical foundation. Moderation implies a specific primary relationship: Variable X influences Variable Y, and Variable M alters this influence. In contrast, an interaction doesn't necessarily assume a direct primary relationship. It simply indicates that both X and M are related to Y and that their combined effect on Y is not purely additive. This means that the relationship between X and Y might vary at different levels of M, or alternatively, the relationship between M and Y might change depending on the level of X. The interaction can work in either direction.
+
+![Moderation](images/mediation_model_1.png){fig-align="center"}
+
+
+
+### Example – Age as a Moderator
+
+Imagine a study exploring the relationship between the number of hours employees engage in professional development activities and their overall job performance. Suppose a basic regression analysis reveals that more hours spent on professional development are associated with higher job performance:
+
+```{r}
+#lm(job_performance ~ professional_hours, data = employee_data) %>% summary()
 
 ```
+
+However, we might wonder if this positive relationship is true for all employees, regardless of their age. Specifically, does the impact of professional development hours on job performance differ between younger employees and those who are more experienced or older? In this context, age acts as a potential moderator. We hypothesize that the effect of professional development on job performance may vary depending on an employee’s age group.
+
+**Hypothesis:**
+
+- **Younger Employees:** Might benefit more from professional development hours as they are still building their skills and knowledge.
+
+- **Older Employees:** May experience a different level of impact, possibly due to having more established skills or different learning preferences.
+
+
+
+**Simulating Data in R:**
+
+To test this moderation effect, we can simulate some data in R. Here’s a basic example:
+
+
+```{r}
+
+#load libraries
+pacman::p_load(dplyr, ggplot2,magrittr,interactions,Hmisc,mediation)
+
+
+#set seed
+set.seed(999)
+
+
+# Let's simulate data
+
+# sample size
+n <- 500
+
+# Simulate age with a higher probability for Younger and Older groups
+employee_data <- data.frame(
+  professional_hours = rnorm(n, mean = 20, sd = 5),
+  age = sample(c(25:40, 41:60), n, replace = TRUE, prob = c(rep(0.6/16, 16), rep(0.4/20, 20))) )
+
+
+
+# We can also create a binary moderator variable: Younger (<=40) vs. Older (>40)
+employee_data <- employee_data %>%
+  mutate(age_group = ifelse(age <= 40, "Younger", "Older"))
+
+# Assume job perform
