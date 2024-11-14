@@ -1285,7 +1285,7 @@ Interpretation- From our example dataset, our calculated $R^2$ = 0.65. Thus, we 
 
 # Chapter 5 - Moderation and Mediation Analysis
 
-## Moderation
+Moderation
 
 
 In many cases, the relationship we want to explore extend beyond a simple pair of variables interacting with each other. Often, additional elements may shape the dynamics of these relationships. For example, there might be underlying factors that modify how two variables are connected or provide reasons for their association. These questions are important for a deeper understanding but cannot be addressed using the basic methods like a simple linear regression, for example. Those methods were limited to examining the direct effect between two variables (say X and Y) without the flexibility to incorporate extra factors that might be at play.
