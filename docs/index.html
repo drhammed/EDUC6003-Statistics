@@ -224,7 +224,21 @@ window.Quarto = {
   <li><a href="#variation-decomposition" id="toc-variation-decomposition" class="nav-link" data-scroll-target="#variation-decomposition">Variation Decomposition</a></li>
   <li><a href="#coefficient-of-determination" id="toc-coefficient-of-determination" class="nav-link" data-scroll-target="#coefficient-of-determination">Coefficient of Determination</a></li>
   </ul></li>
-  <li><a href="#chapter-5---mediation-and-moderation-analysis" id="toc-chapter-5---mediation-and-moderation-analysis" class="nav-link" data-scroll-target="#chapter-5---mediation-and-moderation-analysis">Chapter 5 - Mediation and Moderation Analysis</a></li>
+  <li><a href="#chapter-5---moderation-and-mediation-analysis" id="toc-chapter-5---moderation-and-mediation-analysis" class="nav-link" data-scroll-target="#chapter-5---moderation-and-mediation-analysis">Chapter 5 - Moderation and Mediation Analysis</a>
+  <ul class="collapse">
+  <li><a href="#understanding-moderation-in-statistical-analysis" id="toc-understanding-moderation-in-statistical-analysis" class="nav-link" data-scroll-target="#understanding-moderation-in-statistical-analysis">Understanding Moderation in Statistical Analysis</a>
+  <ul class="collapse">
+  <li><a href="#exploring-moderation-and-its-relationship-to-interaction" id="toc-exploring-moderation-and-its-relationship-to-interaction" class="nav-link" data-scroll-target="#exploring-moderation-and-its-relationship-to-interaction">Exploring Moderation and Its Relationship to Interaction</a></li>
+  <li><a href="#example-age-as-a-moderator" id="toc-example-age-as-a-moderator" class="nav-link" data-scroll-target="#example-age-as-a-moderator">Example – Age as a Moderator</a></li>
+  <li><a href="#example-2--moderation-with-a-continuous-moderator" id="toc-example-2--moderation-with-a-continuous-moderator" class="nav-link" data-scroll-target="#example-2--moderation-with-a-continuous-moderator">Example 2- Moderation with a Continuous Moderator</a></li>
+  </ul></li>
+  <li><a href="#mean-centering-in-moderation-models" id="toc-mean-centering-in-moderation-models" class="nav-link" data-scroll-target="#mean-centering-in-moderation-models">Mean Centering in Moderation Models</a></li>
+  <li><a href="#mediation" id="toc-mediation" class="nav-link" data-scroll-target="#mediation">Mediation</a>
+  <ul class="collapse">
+  <li><a href="#traditional-mediation-analysis-and-the-baron-kenny-approach" id="toc-traditional-mediation-analysis-and-the-baron-kenny-approach" class="nav-link" data-scroll-target="#traditional-mediation-analysis-and-the-baron-kenny-approach">Traditional Mediation Analysis and the Baron &amp; Kenny Approach</a></li>
+  <li><a href="#using-bootstrapping" id="toc-using-bootstrapping" class="nav-link" data-scroll-target="#using-bootstrapping">Using Bootstrapping</a></li>
+  </ul></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -2039,17 +2053,536 @@ F-statistic: 815.6 on 2 and 387 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p>Interpretation- From our example dataset, our calculated <span class="math inline">\(R^2\)</span> = 0.65. Thus, we can conclude that 65% of the observed variation in stopping distance can be explained by the linear relationship with speed.</p>
 </section>
 </section>
-<section id="chapter-5---mediation-and-moderation-analysis" class="level1">
-<h1>Chapter 5 - Mediation and Moderation Analysis</h1>
+<section id="chapter-5---moderation-and-mediation-analysis" class="level1">
+<h1>Chapter 5 - Moderation and Mediation Analysis</h1>
+<p>Moderation</p>
 <p>In many cases, the relationship we want to explore extend beyond a simple pair of variables interacting with each other. Often, additional elements may shape the dynamics of these relationships. For example, there might be underlying factors that modify how two variables are connected or provide reasons for their association. These questions are important for a deeper understanding but cannot be addressed using the basic methods like a simple linear regression, for example. Those methods were limited to examining the direct effect between two variables (say X and Y) without the flexibility to incorporate extra factors that might be at play.</p>
 <p>Moderation and mediation analyses allow us to incorporate one or more additional variables into our models, giving us a more comprehensive view of how various factors might influence the relationship between two primary variables. In a very basic way, moderation and mediation introduce an extra variable to the existing relationship. While it is possible to include multiple moderating or mediating variables, it is generally less common due to the added complexity and the challen ges associated with interpreting such complex models. When adding a single additional variable, these methods help us address specific questions:</p>
 <ul>
-<li><p><strong>Moderation:</strong> How does the strength or direction of the relationship between variables X and Y change at different levels of a third variable, Z?</p></li>
-<li><p><strong>Mediation:</strong> Does a third aditional variable, Z, serve as a mechanism through which X influences Y?</p></li>
+<li><p><strong>Moderation:</strong> How does the strength or direction of the relationship between variables X and Y change at different levels of a third variable, M?</p></li>
+<li><p><strong>Mediation:</strong> Does a third aditional variable, M, serve as a mechanism through which X influences Y?</p></li>
 </ul>
 <p>In this tutorial, we will cover the application of both moderation and mediation analyses using R. Essentially, you will learn the steps to perform these analyses, as well as how to interpret the outcomes.</p>
+<section id="understanding-moderation-in-statistical-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="understanding-moderation-in-statistical-analysis">Understanding Moderation in Statistical Analysis</h2>
+<p>Moderation examines how the relationship between two variables is influenced by a third variable. Specifically, it assesses the extent to which the impact of one variable on another varies depending on the level or presence of an additional variable.</p>
+<p><strong>Assumptions Regarding the Dependent Variable:</strong></p>
+<p>Moderation analysis relies on linear regression techniques, so the outcome variable should be <strong>continuous</strong>. Also, the predictors in the model can be either continuous or categorical (binary).</p>
+<p>As with regression analysis, there are assumptions that are quite important here:</p>
+<ul>
+<li><p><strong>Linearity:</strong> A crucial assumption for moderation is that the interaction between the variables is linear. This implies that the effect of the independent variable (X) on the dependent variable (Y) changes at a consistent rate as the moderator variable (M) increases or decreases. Moreover, the primary relationship between X and Y should also be <strong>linear</strong>. Ensuring both the moderation effect and the original relationship are linear is essential for accurate interpretation.</p></li>
+<li><p><strong>Other Assumptions:</strong> Beyond linearity, moderation shares the same assumptions as multiple regression, such as homoscedasticity, independence of errors, and normality of residuals.</p></li>
+</ul>
+<p>So, essentially, moderation analysis allows us to determine whether the relationship between two variables is shaped by a third variable. For accurate interpretation, both the moderation effect and the direct relationship between the primary variables should show linearity. Aside from this, moderation operates under the standard assumptions of multiple regression.</p>
+<p>When we say that a moderator influences the relationship between two other variables, we mean that the nature or strength of that relationship changes based on the level or category of the moderator. In other words, the relationship between X and Y isn’t uniform across all conditions but varies with moderator M.</p>
+<section id="exploring-moderation-and-its-relationship-to-interaction" class="level3">
+<h3 class="anchored" data-anchor-id="exploring-moderation-and-its-relationship-to-interaction">Exploring Moderation and Its Relationship to Interaction</h3>
+<p>As in any statistical models, we have to evaluate moderation effects through statistical methods. Ideally, if you visualize the relationship between two variables across different levels of a moderator and notice that the regression lines are not parallel, this indicates <strong>moderation</strong>. Why is that? Parallel lines suggest that the relationship between the two primary variables remains constant regardless of the moderator’s level, meaning the moderator doesn’t influence the relationship. However, if the lines have different slopes, it signifies that the strength or direction of the relationship changes depending on the moderator.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/interaction_1.png" class="img-fluid figure-img"></p>
+<figcaption>Moderation Effect Plot</figcaption>
+</figure>
+</div>
+<p>You might have heard of <strong>interaction</strong> terms before? This is technically the same logic. We say we have <em>interaction</em> when the effect of one variable on an outcome depends on the level of another variable. Essentially, this is what we’re observing with moderation. In fact, we call the graph illustrating non-parallel slopes as an “interaction plot” rather than a “moderation plot.” So, how do moderation and interaction differ?</p>
+<p>I’d say the distinction between moderation and interaction is subtle and primarily lies in their interpretation rather than their mathematical foundation. Moderation implies a specific primary relationship: Variable X influences Variable Y, and Variable M alters this influence. In contrast, an interaction doesn’t necessarily assume a direct primary relationship. It simply indicates that both X and M are related to Y and that their combined effect on Y is not purely additive. This means that the relationship between X and Y might vary at different levels of M, or alternatively, the relationship between M and Y might change depending on the level of X. The interaction can work in either direction.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/mediation_model_1.png" class="img-fluid figure-img"></p>
+<figcaption>Moderation</figcaption>
+</figure>
+</div>
+</section>
+<section id="example-age-as-a-moderator" class="level3">
+<h3 class="anchored" data-anchor-id="example-age-as-a-moderator">Example – Age as a Moderator</h3>
+<p>Imagine a study exploring the relationship between the number of hours employees engage in professional development activities and their overall job performance. Suppose a basic regression analysis reveals that more hours spent on professional development are associated with higher job performance:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a><span class="co">#lm(job_performance ~ professional_hours, data = employee_data) %&gt;% summary()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>However, we might wonder if this positive relationship is true for all employees, regardless of their age. Specifically, does the impact of professional development hours on job performance differ between younger employees and those who are more experienced or older? In this context, age acts as a potential moderator. We hypothesize that the effect of professional development on job performance may vary depending on an employee’s age group.</p>
+<p><strong>Hypothesis:</strong></p>
+<ul>
+<li><p><strong>Younger Employees:</strong> Might benefit more from professional development hours as they are still building their skills and knowledge.</p></li>
+<li><p><strong>Older Employees:</strong> May experience a different level of impact, possibly due to having more established skills or different learning preferences.</p></li>
+</ul>
+<p><strong>Simulating Data in R:</strong></p>
+<p>To test this moderation effect, we can simulate some data in R. Here’s a basic example:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a><span class="co">#load libraries</span></span>
+<span id="cb95-2"><a href="#cb95-2" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(dplyr, ggplot2,magrittr,interactions,Hmisc,mediation)</span>
+<span id="cb95-3"><a href="#cb95-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb95-4"><a href="#cb95-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb95-5"><a href="#cb95-5" aria-hidden="true" tabindex="-1"></a><span class="co">#set seed</span></span>
+<span id="cb95-6"><a href="#cb95-6" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">999</span>)</span>
+<span id="cb95-7"><a href="#cb95-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb95-8"><a href="#cb95-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb95-9"><a href="#cb95-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's simulate data</span></span>
+<span id="cb95-10"><a href="#cb95-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb95-11"><a href="#cb95-11" aria-hidden="true" tabindex="-1"></a><span class="co"># sample size</span></span>
+<span id="cb95-12"><a href="#cb95-12" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">500</span></span>
+<span id="cb95-13"><a href="#cb95-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb95-14"><a href="#cb95-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate age with a higher probability for Younger and Older groups</span></span>
+<span id="cb95-15"><a href="#cb95-15" aria-hidden="true" tabindex="-1"></a>employee_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb95-16"><a href="#cb95-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">professional_hours =</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">20</span>, <span class="at">sd =</span> <span class="dv">5</span>),</span>
+<span id="cb95-17"><a href="#cb95-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">age =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="dv">25</span><span class="sc">:</span><span class="dv">40</span>, <span class="dv">41</span><span class="sc">:</span><span class="dv">60</span>), n, <span class="at">replace =</span> <span class="cn">TRUE</span>, <span class="at">prob =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="fl">0.6</span><span class="sc">/</span><span class="dv">16</span>, <span class="dv">16</span>), <span class="fu">rep</span>(<span class="fl">0.4</span><span class="sc">/</span><span class="dv">20</span>, <span class="dv">20</span>))) )</span>
+<span id="cb95-18"><a href="#cb95-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb95-19"><a href="#cb95-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb95-20"><a href="#cb95-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb95-21"><a href="#cb95-21" aria-hidden="true" tabindex="-1"></a><span class="co"># We can also create a binary moderator variable: Younger (&lt;=40) vs. Older (&gt;40)</span></span>
+<span id="cb95-22"><a href="#cb95-22" aria-hidden="true" tabindex="-1"></a>employee_data <span class="ot">&lt;-</span> employee_data <span class="sc">%&gt;%</span></span>
+<span id="cb95-23"><a href="#cb95-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">age_group =</span> <span class="fu">ifelse</span>(age <span class="sc">&lt;=</span> <span class="dv">40</span>, <span class="st">"Younger"</span>, <span class="st">"Older"</span>))</span>
+<span id="cb95-24"><a href="#cb95-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb95-25"><a href="#cb95-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Assume job performance is influenced by professional_hours and moderated by age_group</span></span>
+<span id="cb95-26"><a href="#cb95-26" aria-hidden="true" tabindex="-1"></a>employee_data <span class="ot">&lt;-</span> employee_data <span class="sc">%&gt;%</span></span>
+<span id="cb95-27"><a href="#cb95-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">job_performance =</span> </span>
+<span id="cb95-28"><a href="#cb95-28" aria-hidden="true" tabindex="-1"></a>           <span class="fu">ifelse</span>(age_group <span class="sc">==</span> <span class="st">"Younger"</span>, </span>
+<span id="cb95-29"><a href="#cb95-29" aria-hidden="true" tabindex="-1"></a>                  <span class="dv">50</span> <span class="sc">+</span> <span class="dv">5</span> <span class="sc">*</span> professional_hours <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">500</span>, <span class="dv">0</span>, <span class="fl">1.5</span>), </span>
+<span id="cb95-30"><a href="#cb95-30" aria-hidden="true" tabindex="-1"></a>                  <span class="dv">50</span> <span class="sc">+</span> <span class="dv">1</span> <span class="sc">*</span> professional_hours <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">500</span>, <span class="dv">0</span>, <span class="fl">1.5</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now, we can fit the model. We are interested in how age influences the relationship between hours spent on professional development activities (professional_hours) and overall job performance (job_performance).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb96"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a><span class="co">#fit linear model first</span></span>
+<span id="cb96-2"><a href="#cb96-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb96-3"><a href="#cb96-3" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">lm</span>(job_performance <span class="sc">~</span> professional_hours <span class="sc">+</span> age, <span class="at">data =</span> employee_data) <span class="sc">%&gt;%</span> <span class="fu">summary</span>()</span>
+<span id="cb96-4"><a href="#cb96-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb96-5"><a href="#cb96-5" aria-hidden="true" tabindex="-1"></a>mod</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = job_performance ~ professional_hours + age, data = employee_data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-76.964 -15.344   1.889  16.449  47.747 
+
+Coefficients:
+                    Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)        176.85613    5.50243   32.14   &lt;2e-16 ***
+professional_hours   3.49500    0.19917   17.55   &lt;2e-16 ***
+age                 -3.25877    0.09528  -34.20   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 21.61 on 497 degrees of freedom
+Multiple R-squared:  0.7487,    Adjusted R-squared:  0.7477 
+F-statistic: 740.3 on 2 and 497 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>From the result above, we can see Intercept ~ 184.78251. This value represents the estimated job performance score for an employee who has zero hours of professional development. While an employee with no professional development hours is unlikely in a real-world scenario, the intercept provides a baseline for the model.</p>
+<p>Professional Development Hours (3.25): The coefficient for professional_hours is 3.25, which is highly significant (p-value &lt; 2e-16). This means that we have a strong positive relationship between professional development hours and job performance. Also, for each additional hour an employee spends on professional development activities, their job performance score is expected to increase by approximately 3.25 units, holding age constant.</p>
+<p>Age (-3.35): Each additional year of age is associated with a 3.35-unit decrease in job performance score, holding professional development hours constant. This negative relationship is also highly significant (p &lt; 2e-16), suggesting that older employees in this sample tend to have lower job performance scores when controlling for their professional development hours.</p>
+<p>Statistical Significance: The p-value associated with professional_hours and age is &lt; 0.001. This confirms that the relationship between our independent variables and dependent variable (job performance) is statistically significant at all conventional level of significance.</p>
+<p>Model Fit:</p>
+<p>Multiple R-squared (0.7578): Approximately 75.78% of the variability in job performance is explained by professional development hours alone. Adjusted R-squared (0.7568): After adjusting for the number of predictors, about 75.68% of the variance in job performance is explained by the model. F-statistic (777.4, p &lt; 2.2e-16): The overall model is statistically significant, suggesting that professional development hours reliably predict job performance.</p>
+<p>Please note: Due to stochasticity, the values above may change slightly when you run yours since we’re using simulated data - but it should not change that much.</p>
+<p><strong>Note:</strong></p>
+<p>The coefficients represent the unique main effects of each predictor. Specifically, professional development hours and age each have a significant impact on job performance independently of one another.</p>
+<p>While this model highlights the direct individual relationships, it does not inform us about whether the effect of professional development hours on job performance varies by age. In other words, we haven’t yet tested if age moderates the relationship between professional development and job performance.</p>
+<p>To explore whether age acts as a moderator, we need to include an interaction (moderation) term between professional_hours and age in our model. This will allow us to assess if the impact of professional development on job performance differs across different age groups.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Finally, fit a moderation model</span></span>
+<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lm</span>(job_performance <span class="sc">~</span> professional_hours <span class="sc">*</span> age_group, <span class="at">data =</span> employee_data)</span>
+<span id="cb98-3"><a href="#cb98-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = job_performance ~ professional_hours * age_group, 
+    data = employee_data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-4.3865 -1.0182 -0.1125  1.1429  4.5200 
+
+Coefficients:
+                                    Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)                         50.19846    0.49537 101.336   &lt;2e-16 ***
+professional_hours                   0.99558    0.02436  40.863   &lt;2e-16 ***
+age_groupYounger                    -0.24337    0.60698  -0.401    0.689    
+professional_hours:age_groupYounger  4.00837    0.02989 134.119   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 1.531 on 496 degrees of freedom
+Multiple R-squared:  0.9987,    Adjusted R-squared:  0.9987 
+F-statistic: 1.312e+05 on 3 and 496 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>From the result above, we observe that the <span class="math inline">\(R^2\)</span> value has increased from 0.7578 in the initial multiple regression model to 0.9988 after introducing the interaction/moderation term. This increase indicates that the model with the interaction term fits the data significantly better. Additionally, once we add the interaction between professional_hours and age_group, the unique effect of age_group becomes non-significant. Why does this shift occur? By including the interaction, we appropriately attribute variance to the combined effect of professional_hours and age_group rather than isolating their individual linear effects. This adjustment provides a more accurate representation of each variable’s unique impact. It’s important to remember that in regression modeling, each coefficient reflects the unique main effect of its corresponding variable while controlling for the others in the model.</p>
+<p>Looking at the interaction/moderation term, it appears to be highly significant. But what does this imply? Moderation effects can be complex to interpret, so visualizing the relationship with a graph is often helpful. However, before we create the plot, let’s attempt to understand it conceptually.</p>
+<p>Recall that the interaction term models how the relationship between professional_hours and job_performance varies based on age_group.</p>
+<p>In our model, the coefficient for the interaction term is 3.97368. This means that the effect of professional_hours on job_performance is 3.97368 units stronger for the “Younger” age group compared to the “Older” age group.</p>
+<p>Specifically:</p>
+<p><em>For Older Employees:</em> The effect of professional_hours on job_performance is 1.00426 (the coefficient for professional_hours).</p>
+<p><em>For Younger Employees:</em> The effect of professional_hours on job_performance is 1.00426 + 3.97368 = 4.97794.</p>
+<p>This indicates that professional development hours have a significantly stronger positive impact on job performance for Younger employees than for Older employees. In other words, the relationship between professional development and job performance is contingent upon the employee’s age group—a classic case of moderation.</p>
+<p>What Does This Mean for Our Study?</p>
+<p>The interaction suggests that the effectiveness of professional development activities in enhancing job performance varies by age. We can say that younger employees benefit more from additional professional development hours compared to their older counterparts.</p>
+<ul>
+<li><p><strong>Main Effect of Professional Hours:</strong> Indicates the overall relationship between professional development hours and job performance.</p></li>
+<li><p><strong>Main Effect of Age Group:</strong> Shows any direct differences in job performance between younger and older employees, regardless of professional hours.</p></li>
+<li><p><strong>Interaction Term (professional_hours:age_group):</strong> Reveals whether the relationship between professional hours and job performance differs by age group.</p></li>
+</ul>
+<p><strong>Visualization:</strong></p>
+<p>This moderated relationship can be visualized by plotting separate regression lines for different age groups, showing how the slope of the relationship between professional development hours and job performance changes with age.</p>
+<p>let’s create an interaction plot:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb100"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a>mod1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(job_performance <span class="sc">~</span> professional_hours <span class="sc">*</span> age_group, <span class="at">data =</span> employee_data)</span>
+<span id="cb100-2"><a href="#cb100-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb100-3"><a href="#cb100-3" aria-hidden="true" tabindex="-1"></a>interactions<span class="sc">::</span><span class="fu">interact_plot</span>(mod1, <span class="st">"professional_hours"</span>, <span class="at">modx =</span> <span class="st">"age_group"</span>,</span>
+<span id="cb100-4"><a href="#cb100-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">modx.labels =</span> <span class="fu">c</span>(<span class="st">"Older"</span>, <span class="st">"Younger"</span>),</span>
+<span id="cb100-5"><a href="#cb100-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">legend.main =</span> <span class="st">"Age_Group"</span>,</span>
+<span id="cb100-6"><a href="#cb100-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">y.label =</span> <span class="st">"Job Performance"</span>,</span>
+<span id="cb100-7"><a href="#cb100-7" aria-hidden="true" tabindex="-1"></a>                            <span class="at">x.label =</span> <span class="st">"Professional Hours"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-54-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We can also use ggplot to do the same thing</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb101"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb101-1"><a href="#cb101-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(employee_data, <span class="fu">aes</span>(<span class="at">x =</span> professional_hours, <span class="at">y =</span> job_performance, <span class="at">color =</span> age_group)) <span class="sc">+</span></span>
+<span id="cb101-2"><a href="#cb101-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb101-3"><a href="#cb101-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb101-4"><a href="#cb101-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Moderation Effect of Age on Professional Development and Job Performance"</span>,</span>
+<span id="cb101-5"><a href="#cb101-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Professional Development Hours"</span>,</span>
+<span id="cb101-6"><a href="#cb101-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Job Performance"</span>,</span>
+<span id="cb101-7"><a href="#cb101-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="st">"Age Group"</span>) <span class="sc">+</span></span>
+<span id="cb101-8"><a href="#cb101-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-55-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The interaction plot shows that job performance increases with professional hours for both younger and older employees. However, the effect is much stronger for younger employees, as indicated by the steeper slope of their line compared to that of the older employees. This suggests that younger employees’ job performance is more positively influenced by additional professional hours than that of older employees. By visualizing the interaction, We can see that age_group moderates the relationship between professional_hours and job_performance.</p>
+</section>
+<section id="example-2--moderation-with-a-continuous-moderator" class="level3">
+<h3 class="anchored" data-anchor-id="example-2--moderation-with-a-continuous-moderator">Example 2- Moderation with a Continuous Moderator</h3>
+<p>So far, we’ve conducted moderation analyses using categorical moderators, such as age_group This process is relatively straightforward since it involves comparing a limited number of slopes—for instance, the slope for Younger versus that for older employees. However, what if we want to use a continuous variable as a moderator?</p>
+<p>Consider the following scenario: Suppose we believe that the amount of social support an employee receives influences their job satisfaction, but we’re unsure if this relationship remains consistent across different levels of work experience. One reason for this uncertainty is that the impact of social support might vary depending on an employee’s years of experience. For instance, more experienced employees might utilize social support differently compared to their less experienced counterparts, potentially leading to varying effects on job satisfaction. Also, even if all employees receive similar levels of social support, the direct effect on their job satisfaction could differ based on their work experience, as more seasoned employees may have developed distinct coping strategies over time. Therefore, let’s investigate whether work experience moderates the relationship between social support and job satisfaction: Does the effect of social support on job satisfaction change depending on an employee’s level of work experience? Let’s explore this further.</p>
+<p>Again, let’s simulate data in R (of course you can use your own data if you have):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb103"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set seed</span></span>
+<span id="cb103-2"><a href="#cb103-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">9999</span>)</span>
+<span id="cb103-3"><a href="#cb103-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb103-4"><a href="#cb103-4" aria-hidden="true" tabindex="-1"></a><span class="co"># sample size</span></span>
+<span id="cb103-5"><a href="#cb103-5" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">500</span></span>
+<span id="cb103-6"><a href="#cb103-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb103-7"><a href="#cb103-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate data</span></span>
+<span id="cb103-8"><a href="#cb103-8" aria-hidden="true" tabindex="-1"></a>data2 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb103-9"><a href="#cb103-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">social_support =</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">50</span>, <span class="at">sd =</span> <span class="dv">10</span>),        </span>
+<span id="cb103-10"><a href="#cb103-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">work_experience =</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">10</span>, <span class="at">sd =</span> <span class="dv">2</span>)     </span>
+<span id="cb103-11"><a href="#cb103-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb103-12"><a href="#cb103-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb103-13"><a href="#cb103-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's Create job satisfaction, influenced by social_support and moderated by work_experience</span></span>
+<span id="cb103-14"><a href="#cb103-14" aria-hidden="true" tabindex="-1"></a>data2 <span class="ot">&lt;-</span> data2 <span class="sc">%&gt;%</span></span>
+<span id="cb103-15"><a href="#cb103-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">job_satisfaction =</span> </span>
+<span id="cb103-16"><a href="#cb103-16" aria-hidden="true" tabindex="-1"></a>           <span class="dv">30</span> <span class="sc">+</span> </span>
+<span id="cb103-17"><a href="#cb103-17" aria-hidden="true" tabindex="-1"></a>           <span class="fl">0.5</span> <span class="sc">*</span> social_support <span class="sc">+</span> </span>
+<span id="cb103-18"><a href="#cb103-18" aria-hidden="true" tabindex="-1"></a>           <span class="fl">1.2</span> <span class="sc">*</span> work_experience <span class="sc">+</span> </span>
+<span id="cb103-19"><a href="#cb103-19" aria-hidden="true" tabindex="-1"></a>           <span class="fl">0.05</span> <span class="sc">*</span> social_support <span class="sc">*</span> work_experience <span class="sc">+</span> </span>
+<span id="cb103-20"><a href="#cb103-20" aria-hidden="true" tabindex="-1"></a>           <span class="fu">rnorm</span>(n, <span class="dv">0</span>, <span class="dv">5</span>))  <span class="co"># Outcome variable with interaction effect</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Here, we are examining how social support (the predictor variable) affects job satisfaction (the outcome variable) and whether this relationship is influenced by work experience (the continuous moderator).</p>
+<p><strong>Conducting the Moderation Analysis</strong></p>
+<p>To test whether work experience moderates the relationship between social support and job satisfaction, we can include an interaction term in our regression model. This interaction term allows us to assess if the slope of the relationship between social support and job satisfaction changes at different levels of work experience.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb104"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb104-1"><a href="#cb104-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the moderation model with interaction term</span></span>
+<span id="cb104-2"><a href="#cb104-2" aria-hidden="true" tabindex="-1"></a>mod_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(job_satisfaction <span class="sc">~</span> social_support <span class="sc">*</span> work_experience, <span class="at">data =</span> data2)</span>
+<span id="cb104-3"><a href="#cb104-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-4"><a href="#cb104-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-5"><a href="#cb104-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the model summary</span></span>
+<span id="cb104-6"><a href="#cb104-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = job_satisfaction ~ social_support * work_experience, 
+    data = data2)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-18.3593  -3.4445  -0.0527   3.2653  13.3838 
+
+Coefficients:
+                               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)                    32.92252    6.44879   5.105 4.72e-07 ***
+social_support                  0.44652    0.12918   3.457 0.000594 ***
+work_experience                 0.78332    0.63150   1.240 0.215414    
+social_support:work_experience  0.05827    0.01265   4.605 5.24e-06 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 5.229 on 496 degrees of freedom
+Multiple R-squared:  0.8525,    Adjusted R-squared:  0.8516 
+F-statistic: 955.6 on 3 and 496 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>From the result above, we can see the estimate of social support as 0.47. This means that for each additional unit increase in social support, job satisfaction increases by 0.47 units, holding work experience constant. Also, we can see a significant (p &lt; 2e-16) positive relationship.</p>
+<p>Work Experience (0.78): For each additional year of work experience, there will be corresponding 0.78-unit increase in job satisfaction, holding social support constant.</p>
+<p>The intereaction term (estimate ~ 0.06) is also significant, which means that work experience moderates the relationship between social support and job satisfaction.. The positive interaction term indicates that the effect of social support on job satisfaction increases by 0.06 units for each additional year of work experience.</p>
+<p>Thus, we can conclude by saying that the positive interaction suggests that social support has a stronger positive effect on job satisfaction for employees with more work experience compared to those with less experience. For less experienced employees, the impact of social support on job satisfaction is positive but less pronounced.</p>
+<p>Again, we can visualize the Moderation Effect. Like previous example, we can use the interact_plot function from the interactions package to create an interaction plot.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb106"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb106-1"><a href="#cb106-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the interaction plot</span></span>
+<span id="cb106-2"><a href="#cb106-2" aria-hidden="true" tabindex="-1"></a>interactions<span class="sc">::</span><span class="fu">interact_plot</span>(mod_model, <span class="at">pred =</span> social_support, <span class="at">modx =</span> work_experience, </span>
+<span id="cb106-3"><a href="#cb106-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">interval =</span> <span class="cn">TRUE</span>, <span class="at">plot.points =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb106-4"><a href="#cb106-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Moderation Effect of Work Experience on the Relationship Between Social Support and Job Satisfaction"</span>,</span>
+<span id="cb106-5"><a href="#cb106-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Social Support"</span>,</span>
+<span id="cb106-6"><a href="#cb106-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Job Satisfaction"</span>) <span class="sc">+</span></span>
+<span id="cb106-7"><a href="#cb106-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-58-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The interaction plot shows how work experience moderates the relationship between social support and job satisfaction. The x-axis represents social support levels, while each line corresponds to a different level of work experience (+1 SD, Mean, -1 SD). The slope of each line indicates the strength of the positive relationship between social support and job satisfaction. Steeper slopes suggest a stronger positive relationship, meaning that increases in social support are associated with greater increases in job satisfaction for more experienced employees. Also, flatter slopes indicate a weaker effect for employees with less work experience.</p>
+</section>
+</section>
+<section id="mean-centering-in-moderation-models" class="level2">
+<h2 class="anchored" data-anchor-id="mean-centering-in-moderation-models">Mean Centering in Moderation Models</h2>
+<p>Now that we have explored both categorical and continuous moderators, we need to look at mean centering.</p>
+<p>Remember our regression model:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb107"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb107-1"><a href="#cb107-1" aria-hidden="true" tabindex="-1"></a>mod_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(job_satisfaction <span class="sc">~</span> social_support <span class="sc">*</span> work_experience, <span class="at">data =</span> data2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In models like this, we may have concerns about the structure of the current setup. The main issue is <strong>multicollinearity</strong>, which occurs when predictor variables are highly correlated. In our model, we’ve included both social_support and work_experience as individual predictors, alongside their interaction term (social_support * work_experience). This setup can lead to high correlations between the interaction term and the main effects, complicating the interpretation of each predictor’s unique contribution.</p>
+<p>But does multicollinearity pose a significant problem in this context? To address this, we need to create the interaction term explicitly and then examine its correlation with the primary predictors. By doing so, we can assess the extent of multicollinearity and decide whether mean centering is necessary to mitigate its effects.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb108"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb108-1"><a href="#cb108-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(dplyr, ggplot2,magrittr,interactions,Hmisc,mediation)</span>
+<span id="cb108-2"><a href="#cb108-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb108-3"><a href="#cb108-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the interaction term</span></span>
+<span id="cb108-4"><a href="#cb108-4" aria-hidden="true" tabindex="-1"></a>data2_mut <span class="ot">&lt;-</span> data2 <span class="sc">%&gt;%</span></span>
+<span id="cb108-5"><a href="#cb108-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb108-6"><a href="#cb108-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">socialXexperience =</span> social_support <span class="sc">*</span> work_experience</span>
+<span id="cb108-7"><a href="#cb108-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb108-8"><a href="#cb108-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb108-9"><a href="#cb108-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Examine the correlations between social_support, work_experience, and the interaction term</span></span>
+<span id="cb108-10"><a href="#cb108-10" aria-hidden="true" tabindex="-1"></a>cor_mat <span class="ot">&lt;-</span> data2_mut <span class="sc">%&gt;%</span></span>
+<span id="cb108-11"><a href="#cb108-11" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(social_support, work_experience, socialXexperience) <span class="sc">%&gt;%</span></span>
+<span id="cb108-12"><a href="#cb108-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.matrix</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb108-13"><a href="#cb108-13" aria-hidden="true" tabindex="-1"></a>  Hmisc<span class="sc">::</span><span class="fu">rcorr</span>()</span>
+<span id="cb108-14"><a href="#cb108-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb108-15"><a href="#cb108-15" aria-hidden="true" tabindex="-1"></a><span class="co"># correlation results</span></span>
+<span id="cb108-16"><a href="#cb108-16" aria-hidden="true" tabindex="-1"></a>cor_mat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                  social_support work_experience socialXexperience
+social_support              1.00            0.01              0.73
+work_experience             0.01            1.00              0.68
+socialXexperience           0.73            0.68              1.00
+
+n= 500 
 
 
+P
+                  social_support work_experience socialXexperience
+social_support                   0.8993          0.0000           
+work_experience   0.8993                         0.0000           
+socialXexperience 0.0000         0.0000                           </code></pre>
+</div>
+</div>
+<p>As seen above, the correlation between social_support and the interaction term socialXexperience is high (r = 0.73), and similarly, work_experience is r = 0.68 with socialXexperience. These high correlation values indicate that the interaction term shares a significant amount of variance with the main predictors, which may indicate potential multicollinearity issues.</p>
+<p>So, this raises an important question: Should we abandon our moderation analysis due to this multicollinearity? Not really. A widely adopted solution to this problem is <strong>mean centering</strong>. Mean centering involves subtracting the mean of each predictor from its individual values, effectively transforming the variables so that they have a mean of zero. This process retains the original ranking of the data (individuals with higher scores remain higher, and vice versa) but reduces the correlation between the main predictors and the interaction term.</p>
+<p>To perform mean centering, we can use the scale() function in R with the argument scale = FALSE. This ensures that we center the variables without scaling them to unit variance. We will create mean-centered versions of each predictor and the interaction term as follows:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb110"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb110-1"><a href="#cb110-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply mean centering to predictors and create the centered interaction term</span></span>
+<span id="cb110-2"><a href="#cb110-2" aria-hidden="true" tabindex="-1"></a>data_centering <span class="ot">&lt;-</span> data2 <span class="sc">%&gt;%</span></span>
+<span id="cb110-3"><a href="#cb110-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb110-4"><a href="#cb110-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">social_support_c =</span> <span class="fu">scale</span>(social_support, <span class="at">scale =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb110-5"><a href="#cb110-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">work_experience_c =</span> <span class="fu">scale</span>(work_experience, <span class="at">scale =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb110-6"><a href="#cb110-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">socialXexperience_c =</span> social_support_c <span class="sc">*</span> work_experience_c</span>
+<span id="cb110-7"><a href="#cb110-7" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now, we can verify if this actually reduced the multicollinearity</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb111"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb111-1"><a href="#cb111-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the correlations after mean centering</span></span>
+<span id="cb111-2"><a href="#cb111-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb111-3"><a href="#cb111-3" aria-hidden="true" tabindex="-1"></a>cor_mat_centered <span class="ot">&lt;-</span> data_centering <span class="sc">%&gt;%</span></span>
+<span id="cb111-4"><a href="#cb111-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(social_support_c, work_experience_c, socialXexperience_c) <span class="sc">%&gt;%</span></span>
+<span id="cb111-5"><a href="#cb111-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.matrix</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb111-6"><a href="#cb111-6" aria-hidden="true" tabindex="-1"></a>  Hmisc<span class="sc">::</span><span class="fu">rcorr</span>()</span>
+<span id="cb111-7"><a href="#cb111-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb111-8"><a href="#cb111-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the centered correlation matrix</span></span>
+<span id="cb111-9"><a href="#cb111-9" aria-hidden="true" tabindex="-1"></a>cor_mat_centered</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                    social_support_c work_experience_c socialXexperience_c
+social_support_c                1.00              0.01               -0.01
+work_experience_c               0.01              1.00               -0.08
+socialXexperience_c            -0.01             -0.08                1.00
+
+n= 500 
+
+
+P
+                    social_support_c work_experience_c socialXexperience_c
+social_support_c                     0.8993            0.7540             
+work_experience_c   0.8993                             0.0890             
+socialXexperience_c 0.7540           0.0890                               </code></pre>
+</div>
+</div>
+<p>As expected, the correlations between the main predictors and the interaction term are now technically zero- so no multicollinearity.</p>
+<p>Finally, let’s refit the Moderation Model with Centered Variables</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb113"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the regression model with mean-centered variables</span></span>
+<span id="cb113-2"><a href="#cb113-2" aria-hidden="true" tabindex="-1"></a>centered_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(job_satisfaction <span class="sc">~</span> social_support_c <span class="sc">*</span> work_experience_c, <span class="at">data =</span> data_centering) </span>
+<span id="cb113-3"><a href="#cb113-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb113-4"><a href="#cb113-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(centered_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = job_satisfaction ~ social_support_c * work_experience_c, 
+    data = data_centering)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-18.3593  -3.4445  -0.0527   3.2653  13.3838 
+
+Coefficients:
+                                   Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)                        92.15552    0.23386 394.060  &lt; 2e-16 ***
+social_support_c                    1.03308    0.02336  44.232  &lt; 2e-16 ***
+work_experience_c                   3.67932    0.12297  29.920  &lt; 2e-16 ***
+social_support_c:work_experience_c  0.05827    0.01265   4.605 5.24e-06 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 5.229 on 496 degrees of freedom
+Multiple R-squared:  0.8525,    Adjusted R-squared:  0.8516 
+F-statistic: 955.6 on 3 and 496 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>The coefficients in this centered model will differ slightly from those in the uncentered model, but they represent the same underlying relationships. Importantly, we can see that the interaction term remains unchanged in magnitude and significance, indicating that the moderation effect is consistent. However, the interpretation of the main effects becomes different a bit:</p>
+<p>Social Support (social_support_c): This is the effect of social support on job satisfaction when work_experience_c is zero (i.e., at the mean work experience). Work Experience (work_experience_c): Represents the effect of work experience on job satisfaction when social_support_c is zero (i.e., at the mean social support).</p>
+<p>Lastly, let’s visualize our interaction plot</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb115"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb115-1"><a href="#cb115-1" aria-hidden="true" tabindex="-1"></a><span class="co"># interaction plot</span></span>
+<span id="cb115-2"><a href="#cb115-2" aria-hidden="true" tabindex="-1"></a>interactions<span class="sc">::</span><span class="fu">interact_plot</span>(centered_model, <span class="at">pred =</span> social_support_c, <span class="at">modx =</span> work_experience_c) <span class="sc">+</span></span>
+<span id="cb115-3"><a href="#cb115-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Moderation Effect of Work Experience on the Relationship Between Social Support and Job Satisfaction"</span>,</span>
+<span id="cb115-4"><a href="#cb115-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Social Support (Centered)"</span>,</span>
+<span id="cb115-5"><a href="#cb115-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Job Satisfaction"</span>) <span class="sc">+</span></span>
+<span id="cb115-6"><a href="#cb115-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-64-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Here, the plot shows that as social support increases, job satisfaction rises more sharply for employees with greater work experience compared to those with less experience.</p>
+</section>
+<section id="mediation" class="level2">
+<h2 class="anchored" data-anchor-id="mediation">Mediation</h2>
+<p>In many cases, we want to understand not just whether variables are related, but how they are related This is where mediation analysis comes in. Mediation helps us determine whether the relationship between a predictor variable and an outcome variable can be linked to an intermediate variable, known as the mediator.</p>
+<p>Consider a scenario where implementing a new teaching strategy—such as encouraging students to take handwritten notes instead of typing them on a laptop—leads to improved academic performance. At first, there appears to be a direct effect of the teaching method on learning outcomes. However, to truly understand why this improvement occurs, we might investigate whether taking handwritten notes encourages students to process information more deeply, thereby enhancing their learning.</p>
+<p>In this context, mediation analysis allows us to explore whether the increased depth of information processing (the mediator) explains the relationship between the note-taking method (the predictor) and academic performance (the outcome). If our hypothesis is true, we would conclude that the method of note-taking influences learning outcomes indirectly through its effect on information processing.</p>
+<p>Mediation is technically about explaining relationships. It provides a way to map out the causal pathways that link variables and thus, gives us a more comprehensive understanding of the underlying mechanisms. Statistically, mediation analysis assesses whether the relationship between an independent variable (X) and a dependent variable (Y) is accounted for by a third variable (M).</p>
+<p><strong>Understanding Causality in Mediation</strong></p>
+<p>While mediation analysis can suggest pathways of influence, it’s important to recognize that causality cannot be definitively established through mediation alone. Causal inferences require careful experimental design to ensure that the cause precedes the effect (Temporal Order), The cause and effect are related (Covariation), and Other potential explanations are ruled out (Elimination of Alternatives).</p>
+<p>For example, if we collect cross-sectional data on traits like neuroticism, state anxiety, and anxiety disorders, we might propose a mediation model where neuroticism influences anxiety disorders through state anxiety. However, without longitudinal data or experimental manipulation, we cannot confidently assert the direction of causality or rule out other factors that might explain the observed relationships.</p>
+<p>Therefore, when conducting or interpreting mediation analyses, it’s essential to have a strong (theoretical) rationale for assigning roles to each variable and to consider the design of the study to support causal claims.</p>
+<section id="traditional-mediation-analysis-and-the-baron-kenny-approach" class="level3">
+<h3 class="anchored" data-anchor-id="traditional-mediation-analysis-and-the-baron-kenny-approach">Traditional Mediation Analysis and the Baron &amp; Kenny Approach</h3>
+<p>In 1986, Baron and Kenny introduced a widely-used framework for establishing mediation. Their approach involves a series of regression analyses to test the following criteria:</p>
+<p>Direct Effect: The predictor (X) significantly affects the outcome (Y). Model: 𝑌∼ 𝑋</p>
+<p>Mediator Effect: The predictor (X) significantly affects the mediator (M).</p>
+<p>Model: 𝑀 ∼𝑋</p>
+<p>Mediator’s Impact on Outcome: The mediator (M) significantly affects the outcome (Y) while controlling for the predictor (X).</p>
+<p>Model: 𝑌 ∼ 𝑀 + 𝑋</p>
+<p>Reduction in Direct Effect: The direct effect of the predictor (X) on the outcome (Y) is smaller when the mediator (M) is included in the model. - Compare the direct effect from step 1 to step 3.</p>
+<p>If these conditions are met, Baron and Kenny concluded that mediation is present. Depending on whether the direct effect of X on Y becomes non-significant (full mediation) or remains significant but reduced (partial mediation), we can categorize the mediation accordingly.</p>
+<p><strong>Using the Stream Analogy for Mediation</strong></p>
+<p>Imagine a river flowing smoothly from point A to point B. The water represents the relationship between the predictor and the outcome. Now, suppose a tributary branches off from the main river, diverting some of the water flow. This tributary symbolizes the mediator.</p>
+<p>No Mediation: All water continues directly from A to B with no diversion.</p>
+<p>Partial Mediation: Some water flows through the tributary, indicating that part of the relationship is explained by the mediator.</p>
+<p>Full Mediation: All water is diverted through the tributary, meaning the relationship between A and B is entirely explained by the mediator.</p>
+<p>This analogy helps illustrate how mediation can account for varying degrees of influence between variables.</p>
+</section>
+<section id="using-bootstrapping" class="level3">
+<h3 class="anchored" data-anchor-id="using-bootstrapping">Using Bootstrapping</h3>
+<p>Traditionally, the Sobel test was employed to assess the significance of mediation effects. However, recent advancements suggest that bootstrapping methods offer superior performance. Bootstrapping is a powerful statistical method that involves repeatedly sampling with replacement from your dataset to estimate the distribution of a statistic. This technique is particularly useful when the assumptions required for traditional parametric tests, such as normality, are not met. In the context of mediation analysis, bootstrapping provides a more reliable way to assess the significance of indirect effects by minimizing the reliance on strict distributional assumptions.</p>
+<p>The Bootstrapping Process:</p>
+<p>Resample the Data: Draw a large number of samples (e.g., 1,000) from your dataset, each time selecting observations with replacement. This means some observations may appear multiple times in a single resample, while others may not be selected at all.</p>
+<p>Calculate the Statistic: For each resampled dataset, compute the mediation effect. This involves fitting the mediator model (M ~ X) and the outcome model (Y ~ X + M) to estimate the indirect effect.</p>
+<p>Build the Distribution: After performing the above steps across all resamples, you’ll obtain a distribution of mediation effect estimates.</p>
+<p>Determine Confidence Intervals: From this distribution, derive the 95% confidence intervals for the mediation effect. If these intervals do not include zero, the mediation effect is considered statistically significant.</p>
+<p>Let’s use R to do this:</p>
+<p>Using the mediate Package</p>
+<p>Here, We’ll utilize job dataset (a base data in R).</p>
+<p>Fit the Mediator Model (M ~ X):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb116"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb116-1"><a href="#cb116-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"jobs"</span>)</span>
+<span id="cb116-2"><a href="#cb116-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb116-3"><a href="#cb116-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">=</span> jobs</span>
+<span id="cb116-4"><a href="#cb116-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb116-5"><a href="#cb116-5" aria-hidden="true" tabindex="-1"></a>b <span class="ot">&lt;-</span> <span class="fu">lm</span>(job_seek <span class="sc">~</span> treat, df) <span class="co"># x predicts the mediator</span></span>
+<span id="cb116-6"><a href="#cb116-6" aria-hidden="true" tabindex="-1"></a>c <span class="ot">&lt;-</span> <span class="fu">lm</span>(depress2 <span class="sc">~</span> treat <span class="sc">+</span> job_seek, df) <span class="co"># x and m predict the outcome.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Calculate the direct and indirect effects for each of the 1000 random samples and look at the 95% confidence intervals.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb117"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb117-1"><a href="#cb117-1" aria-hidden="true" tabindex="-1"></a>mediation <span class="ot">&lt;-</span> <span class="fu">mediate</span>(b, <span class="co"># Mediator model</span></span>
+<span id="cb117-2"><a href="#cb117-2" aria-hidden="true" tabindex="-1"></a>                    c, <span class="co"># Outcome model</span></span>
+<span id="cb117-3"><a href="#cb117-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">sims=</span><span class="dv">1000</span>, <span class="co"># Number of bootstrap samples</span></span>
+<span id="cb117-4"><a href="#cb117-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">boot =</span> T, <span class="co"># Ask for bootstrapped confidence intervals</span></span>
+<span id="cb117-5"><a href="#cb117-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">treat=</span><span class="st">"treat"</span>, <span class="co"># Name of the x variable</span></span>
+<span id="cb117-6"><a href="#cb117-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">mediator=</span><span class="st">"job_seek"</span> <span class="co"># Name of the m variable</span></span>
+<span id="cb117-7"><a href="#cb117-7" aria-hidden="true" tabindex="-1"></a>                    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Running nonparametric bootstrap</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb119"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb119-1"><a href="#cb119-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mediation)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Causal Mediation Analysis 
+
+Nonparametric Bootstrap Confidence Intervals with the Percentile Method
+
+               Estimate 95% CI Lower 95% CI Upper p-value
+ACME            -0.0152      -0.0404         0.01    0.19
+ADE             -0.0481      -0.1375         0.04    0.30
+Total Effect    -0.0633      -0.1569         0.03    0.17
+Prop. Mediated   0.2399      -1.5375         2.99    0.29
+
+Sample Size Used: 899 
+
+
+Simulations: 1000 </code></pre>
+</div>
+</div>
+<p>From the result above, we can intepret the result like below-</p>
+<p>Average Direct Effect (ADE):</p>
+<p>Estimate: -0.0481 95% Confidence Interval: [-0.1375, 0.04] p-value: 0.30 Interpretation: The direct effect of the independent variable on the outcome is estimated to be -0.0481. However, since the confidence interval includes zero and the p-value is 0.30 (which is above the conventional significance threshold of 0.05), this direct effect is not statistically significant. Average Causal Mediation Effect (ACME):</p>
+<p>Estimate: -0.0152 95% Confidence Interval: [-0.0404, 0.01] p-value: 0.19 Interpretation: The indirect effect through the mediator is estimated at -0.0152. Similar to ADE, the confidence interval encompasses zero, and the p-value is 0.19, indicating that the mediation effect is not statistically significant.</p>
+<p>Total Effect:</p>
+<p>Estimate: -0.0633 95% Confidence Interval: [-0.1569, 0.03] p-value: 0.17 Interpretation: The overall effect of the independent variable on the outcome is estimated at -0.0633. Again, the confidence interval includes zero, and the p-value is 0.17, suggesting that the total effect is not statistically significant. Proportion Mediated:</p>
+<p>Estimate: 0.2399 95% Confidence Interval: [-1.5375, 2.99] p-value: 0.29 Interpretation: Approximately 23.99% of the total effect is mediated by the intermediary variable. However, the wide confidence interval, which spans from negative to positive values, and the p-value of 0.29 indicate that this proportion is not statistically significant.</p>
+<p>Looking at a plot might help intepret these better. If the horizontal line (the confidence interval) intersects the vertical line (0), then the effect is not significant.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb121"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb121-1"><a href="#cb121-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mediation)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-68-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+
+
+</section>
+</section>
 </section>
 
 </main> <!-- /main -->

@@ -1699,7 +1699,7 @@ Finally, let's refit the Moderation Model with Centered Variables
 ```{r}
 
 # Fit the regression model with mean-centered variables
-centered_model <- lm(job_satisfaction ~ social_support_c * work_experience_c, data = data2) 
+centered_model <- lm(job_satisfaction ~ social_support_c * work_experience_c, data = data_centering) 
 
 summary(centered_model)
 
