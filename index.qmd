@@ -1427,7 +1427,8 @@ Multiple R-squared (0.7578): Approximately 75.78% of the variability in job perf
 Adjusted R-squared (0.7568): After adjusting for the number of predictors, about 75.68% of the variance in job performance is explained by the model.
 F-statistic (777.4, p < 2.2e-16): The overall model is statistically significant, suggesting that professional development hours reliably predict job performance.
 
-Please note: Due to stochasticity, the values above may change slightly when you run yours since we're using simulated data - but it should not change that much.
+
+**Please note: Due to stochasticity, the values above may change slightly when you run yours since we're using simulated data - but it should not change that much.**
 
 
 
