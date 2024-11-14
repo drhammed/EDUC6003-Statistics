@@ -1389,4 +1389,509 @@ employee_data <- data.frame(
 employee_data <- employee_data %>%
   mutate(age_group = ifelse(age <= 40, "Younger", "Older"))
 
-# Assume job perform
+# Assume job performance is influenced by professional_hours and moderated by age_group
+employee_data <- employee_data %>%
+  mutate(job_performance = 
+           ifelse(age_group == "Younger", 
+                  50 + 5 * professional_hours + rnorm(500, 0, 1.5), 
+                  50 + 1 * professional_hours + rnorm(500, 0, 1.5)))
+```
+
+
+Now, we can fit the model. We are interested in how age influences the relationship between hours spent on professional development activities (professional_hours) and overall job performance (job_performance).
+
+```{r}
+
+#fit linear model first
+
+mod <- lm(job_performance ~ professional_hours + age, data = employee_data) %>% summary()
+
+mod
+
+
+```
+
+
+From the result above, we can see Intercept ~ 184.78251. This value represents the estimated job performance score for an employee who has zero hours of professional development. While an employee with no professional development hours is unlikely in a real-world scenario, the intercept provides a baseline for the model.
+
+Professional Development Hours (3.25): The coefficient for professional_hours is 3.25, which is highly significant (p-value < 2e-16). This means that we have a strong positive relationship between professional development hours and job performance. Also, for each additional hour an employee spends on professional development activities, their job performance score is expected to increase by approximately 3.25 units, holding age constant.
+
+Age (-3.35): Each additional year of age is associated with a 3.35-unit decrease in job performance score, holding professional development hours constant. This negative relationship is also highly significant (p < 2e-16), suggesting that older employees in this sample tend to have lower job performance scores when controlling for their professional development hours.
+
+
+Statistical Significance: The p-value associated with professional_hours and age is < 0.001. This confirms that the relationship between our independent variables  and dependent variable (job performance) is statistically significant at all conventional level of significance.
+
+Model Fit:
+
+Multiple R-squared (0.7578): Approximately 75.78% of the variability in job performance is explained by professional development hours alone.
+Adjusted R-squared (0.7568): After adjusting for the number of predictors, about 75.68% of the variance in job performance is explained by the model.
+F-statistic (777.4, p < 2.2e-16): The overall model is statistically significant, suggesting that professional development hours reliably predict job performance.
+
+Please note: Due to stochasticity, the values above may change slightly when you run yours since we're using simulated data - but it should not change that much.
+
+
+
+**Note:**
+
+The coefficients represent the unique main effects of each predictor. Specifically, professional development hours and age each have a significant impact on job performance independently of one another.
+
+While this model highlights the direct individual relationships, it does not inform us about whether the effect of professional development hours on job performance varies by age. In other words, we haven’t yet tested if age moderates the relationship between professional development and job performance.
+
+
+
+To explore whether age acts as a moderator, we need to include an interaction (moderation) term between professional_hours and age in our model. This will allow us to assess if the impact of professional development on job performance differs across different age groups.
+
+
+```{r}
+# Finally, fit a moderation model
+model <- lm(job_performance ~ professional_hours * age_group, data = employee_data)
+summary(model)
+
+```
+
+
+From the result above, we observe that the $R^2$ value has increased from 0.7578 in the initial multiple regression model to 0.9988 after introducing the interaction/moderation term. This increase indicates that the model with the interaction term fits the data significantly better. Additionally, once we add the interaction between professional_hours and age_group, the unique effect of age_group becomes non-significant. Why does this shift occur? By including the interaction, we appropriately attribute variance to the combined effect of professional_hours and age_group rather than isolating their individual linear effects. This adjustment provides a more accurate representation of each variable's unique impact. It's important to remember that in regression modeling, each coefficient reflects the unique main effect of its corresponding variable while controlling for the others in the model.
+
+Looking at the interaction/moderation term, it appears to be highly significant. But what does this imply? Moderation effects can be complex to interpret, so visualizing the relationship with a graph is often helpful. However, before we create the plot, let's attempt to understand it conceptually.
+
+Recall that the interaction term models how the relationship between professional_hours and job_performance varies based on age_group.
+
+In our model, the coefficient for the interaction term is 3.97368. This means that the effect of professional_hours on job_performance is 3.97368 units stronger for the "Younger" age group compared to the "Older" age group. 
+
+Specifically:
+
+*For Older Employees:*
+The effect of professional_hours on job_performance is 1.00426 (the coefficient for professional_hours).
+
+*For Younger Employees:*
+The effect of professional_hours on job_performance is 1.00426 + 3.97368 = 4.97794.
+
+This indicates that professional development hours have a significantly stronger positive impact on job performance for Younger employees than for Older employees. In other words, the relationship between professional development and job performance is contingent upon the employee's age group—a classic case of moderation.
+
+What Does This Mean for Our Study?
+
+The interaction suggests that the effectiveness of professional development activities in enhancing job performance varies by age. We can say that younger employees benefit more from additional professional development hours compared to their older counterparts.
+
+
+
+
+- **Main Effect of Professional Hours:** Indicates the overall relationship between professional development hours and job performance.
+
+- **Main Effect of Age Group:** Shows any direct differences in job performance between younger and older employees, regardless of professional hours.
+
+- **Interaction Term (professional_hours:age_group):** Reveals whether the relationship between professional hours and job performance differs by age group.
+
+
+
+**Visualization:**
+
+This moderated relationship can be visualized by plotting separate regression lines for different age groups, showing how the slope of the relationship between professional development hours and job performance changes with age.
+
+let's create an interaction plot:
+
+```{r}
+
+
+mod1 <- lm(job_performance ~ professional_hours * age_group, data = employee_data)
+
+interactions::interact_plot(mod1, "professional_hours", modx = "age_group",
+                            modx.labels = c("Older", "Younger"),
+                            legend.main = "Age_Group",
+                            y.label = "Job Performance",
+                            x.label = "Professional Hours")
+
+```
+
+
+We can also use ggplot to do the same thing
+
+
+```{r}
+
+ggplot(employee_data, aes(x = professional_hours, y = job_performance, color = age_group)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Moderation Effect of Age on Professional Development and Job Performance",
+       x = "Professional Development Hours",
+       y = "Job Performance",
+       color = "Age Group") +
+  theme_minimal()
+
+
+
+```
+
+
+
+The interaction plot shows that job performance increases with professional hours for both younger and older employees. However, the effect is much stronger for younger employees, as indicated by the steeper slope of their line compared to that of the older employees. This suggests that younger employees' job performance is more positively influenced by additional professional hours than that of older employees. By visualizing the interaction, We can see that age_group moderates the relationship between professional_hours and job_performance.
+
+
+### Example 2- Moderation with a Continuous Moderator
+
+So far, we've conducted moderation analyses using categorical moderators, such as age_group This process is relatively straightforward since it involves comparing a limited number of slopes—for instance, the slope for Younger versus that for older employees. However, what if we want to use a continuous variable as a moderator?
+
+Consider the following scenario: Suppose we believe that the amount of social support an employee receives influences their job satisfaction, but we're unsure if this relationship remains consistent across different levels of work experience. One reason for this uncertainty is that the impact of social support might vary depending on an employee's years of experience. For instance, more experienced employees might utilize social support differently compared to their less experienced counterparts, potentially leading to varying effects on job satisfaction. Also, even if all employees receive similar levels of social support, the direct effect on their job satisfaction could differ based on their work experience, as more seasoned employees may have developed distinct coping strategies over time. Therefore, let's investigate whether work experience moderates the relationship between social support and job satisfaction: Does the effect of social support on job satisfaction change depending on an employee’s level of work experience? Let’s explore this further.
+
+Again, let's simulate data in R (of course you can use your own data if you have):
+
+
+```{r}
+
+
+# Set seed
+set.seed(9999)
+
+# sample size
+n <- 500
+
+# Simulate data
+data2 <- data.frame(
+  social_support = rnorm(n, mean = 50, sd = 10),        
+  work_experience = rnorm(n, mean = 10, sd = 2)     
+)
+
+# Let's Create job satisfaction, influenced by social_support and moderated by work_experience
+data2 <- data2 %>%
+  mutate(job_satisfaction = 
+           30 + 
+           0.5 * social_support + 
+           1.2 * work_experience + 
+           0.05 * social_support * work_experience + 
+           rnorm(n, 0, 5))  # Outcome variable with interaction effect
+
+```
+
+
+
+Here, we are examining how social support (the predictor variable) affects job satisfaction (the outcome variable) and whether this relationship is influenced by work experience (the continuous moderator). 
+
+
+**Conducting the Moderation Analysis**
+
+To test whether work experience moderates the relationship between social support and job satisfaction, we can include an interaction term in our regression model. This interaction term allows us to assess if the slope of the relationship between social support and job satisfaction changes at different levels of work experience.
+
+
+```{r}
+# Fit the moderation model with interaction term
+mod_model <- lm(job_satisfaction ~ social_support * work_experience, data = data2)
+
+
+# Display the model summary
+summary(mod_model)
+
+
+```
+
+
+From the result above, we can see the estimate of social support as 0.47. This means that for each additional unit increase in social support, job satisfaction increases by 0.47 units, holding work experience constant. Also, we can see a significant (p < 2e-16) positive relationship.
+
+Work Experience (0.78): For each additional year of work experience, there will be corresponding 0.78-unit increase in job satisfaction, holding social support constant. 
+
+The intereaction term  (estimate ~ 0.06) is also significant, which means that work experience moderates the relationship between social support and job satisfaction.. The positive interaction term indicates that the effect of social support on job satisfaction increases by 0.06 units for each additional year of work experience.
+
+
+Thus, we can conclude by saying that the positive interaction suggests that social support has a stronger positive effect on job satisfaction for employees with more work experience compared to those with less experience. For less experienced employees, the impact of social support on job satisfaction is positive but less pronounced.
+
+
+Again, we can visualize the Moderation Effect. Like previous example, we can use the interact_plot function from the interactions package to create an interaction plot.
+
+```{r}
+
+# Create the interaction plot
+interactions::interact_plot(mod_model, pred = social_support, modx = work_experience, 
+              interval = TRUE, plot.points = TRUE) +
+  labs(title = "Moderation Effect of Work Experience on the Relationship Between Social Support and Job Satisfaction",
+       x = "Social Support",
+       y = "Job Satisfaction") +
+  theme_minimal()
+
+
+```
+
+
+The interaction plot shows how work experience moderates the relationship between social support and job satisfaction. The x-axis represents social support levels, while each line corresponds to a different level of work experience (+1 SD, Mean, -1 SD). The slope of each line indicates the strength of the positive relationship between social support and job satisfaction. Steeper slopes suggest a stronger positive relationship, meaning that increases in social support are associated with greater increases in job satisfaction for more experienced employees. Also, flatter slopes indicate a weaker effect for employees with less work experience.
+
+
+## Mean Centering in Moderation Models
+
+Now that we have explored both categorical and continuous moderators, we need to look at mean centering.
+
+Remember our regression model:
+
+```{r}
+
+mod_model <- lm(job_satisfaction ~ social_support * work_experience, data = data2)
+
+
+```
+
+
+In models like this, we may have concerns about the structure of the current setup. The main issue is **multicollinearity**, which occurs when predictor variables are highly correlated. In our model, we’ve included both social_support and work_experience as individual predictors, alongside their interaction term (social_support * work_experience). This setup can lead to high correlations between the interaction term and the main effects, complicating the interpretation of each predictor's unique contribution.
+
+But does multicollinearity pose a significant problem in this context? To address this, we need to create the interaction term explicitly and then examine its correlation with the primary predictors. By doing so, we can assess the extent of multicollinearity and decide whether mean centering is necessary to mitigate its effects.
+
+```{r}
+
+pacman::p_load(dplyr, ggplot2,magrittr,interactions,Hmisc,mediation)
+
+# Create the interaction term
+data2_mut <- data2 %>%
+  mutate(
+    socialXexperience = social_support * work_experience
+  )
+
+# Examine the correlations between social_support, work_experience, and the interaction term
+cor_mat <- data2_mut %>%
+  dplyr::select(social_support, work_experience, socialXexperience) %>%
+  as.matrix() %>%
+  Hmisc::rcorr()
+
+# correlation results
+cor_mat
+
+
+```
+
+
+As seen above, the correlation between social_support and the interaction term socialXexperience is high (r = 0.73), and similarly, work_experience is r = 0.68 with socialXexperience. These high correlation values indicate that the interaction term shares a significant amount of variance with the main predictors, which may indicate potential multicollinearity issues. 
+
+So, this raises an important question: Should we abandon our moderation analysis due to this multicollinearity? Not really. A widely adopted solution to this problem is **mean centering**. Mean centering involves subtracting the mean of each predictor from its individual values, effectively transforming the variables so that they have a mean of zero. This process retains the original ranking of the data (individuals with higher scores remain higher, and vice versa) but reduces the correlation between the main predictors and the interaction term.
+
+
+To perform mean centering, we can use the scale() function in R with the argument scale = FALSE. This ensures that we center the variables without scaling them to unit variance. We will create mean-centered versions of each predictor and the interaction term as follows:
+
+```{r}
+
+# Apply mean centering to predictors and create the centered interaction term
+data_centering <- data2 %>%
+  mutate(
+    social_support_c = scale(social_support, scale = FALSE),
+    work_experience_c = scale(work_experience, scale = FALSE),
+    socialXexperience_c = social_support_c * work_experience_c
+  )
+
+
+```
+
+
+Now, we can verify if this actually reduced the multicollinearity
+
+```{r}
+# Check the correlations after mean centering
+cor_mat_centered <- data_centering %>%
+  select(social_support_c, work_experience_c, socialXexperience_c) %>%
+  as.matrix() %>%
+  Hmisc::rcorr()
+
+# Display the centered correlation matrix
+cor_mat_centered
+
+```
+
+As expected, the correlations between the main predictors and the interaction term are now technically zero- so no multicollinearity.
+
+
+
+Finally, let's refit the Moderation Model with Centered Variables
+
+```{r}
+
+# Fit the regression model with mean-centered variables
+centered_model <- lm(job_satisfaction ~ social_support_c * work_experience_c, data = data2) 
+
+summary(centered_model)
+
+```
+
+
+The coefficients in this centered model will differ slightly from those in the uncentered model, but they represent the same underlying relationships. Importantly, we can see that the interaction term remains unchanged in magnitude and significance, indicating that the moderation effect is consistent. 
+However, the interpretation of the main effects becomes different a bit:
+
+Social Support (social_support_c): This is the effect of social support on job satisfaction when work_experience_c is zero (i.e., at the mean work experience).
+Work Experience (work_experience_c): Represents the effect of work experience on job satisfaction when social_support_c is zero (i.e., at the mean social support).
+
+
+Lastly, let's visualize our interaction plot
+
+```{r}
+
+
+# interaction plot
+interactions::interact_plot(centered_model, pred = social_support_c, modx = work_experience_c) +
+  labs(title = "Moderation Effect of Work Experience on the Relationship Between Social Support and Job Satisfaction",
+       x = "Social Support (Centered)",
+       y = "Job Satisfaction") +
+  theme_minimal()
+
+```
+
+Here, the plot shows that as social support increases, job satisfaction rises more sharply for employees with greater work experience compared to those with less experience.
+
+
+
+## Mediation
+
+
+In many cases, we want to understand not just whether variables are related, but how they are related This is where mediation analysis comes in. Mediation helps us determine whether the relationship between a predictor variable and an outcome variable can be linked to an intermediate variable, known as the mediator. 
+
+
+Consider a scenario where implementing a new teaching strategy—such as encouraging students to take handwritten notes instead of typing them on a laptop—leads to improved academic performance. At first, there appears to be a direct effect of the teaching method on learning outcomes. However, to truly understand why this improvement occurs, we might investigate whether taking handwritten notes encourages students to process information more deeply, thereby enhancing their learning.
+
+In this context, mediation analysis allows us to explore whether the increased depth of information processing (the mediator) explains the relationship between the note-taking method (the predictor) and academic performance (the outcome). If our hypothesis is true, we would conclude that the method of note-taking influences learning outcomes indirectly through its effect on information processing.
+
+Mediation is technically about explaining relationships. It provides a way to map out the causal pathways that link variables and thus, gives us a more comprehensive understanding of the underlying mechanisms. Statistically, mediation analysis assesses whether the relationship between an independent variable (X) and a dependent variable (Y) is accounted for by a third variable (M).
+
+**Understanding Causality in Mediation**
+
+While mediation analysis can suggest pathways of influence, it’s important to recognize that causality cannot be definitively established through mediation alone. Causal inferences require careful experimental design to ensure that the cause precedes the effect (Temporal Order), The cause and effect are related (Covariation), and Other potential explanations are ruled out (Elimination of Alternatives).
+
+For example, if we collect cross-sectional data on traits like neuroticism, state anxiety, and anxiety disorders, we might propose a mediation model where neuroticism influences anxiety disorders through state anxiety. However, without longitudinal data or experimental manipulation, we cannot confidently assert the direction of causality or rule out other factors that might explain the observed relationships.
+
+Therefore, when conducting or interpreting mediation analyses, it’s essential to have a strong (theoretical) rationale for assigning roles to each variable and to consider the design of the study to support causal claims.
+
+
+
+### Traditional Mediation Analysis and the Baron & Kenny Approach
+
+In 1986, Baron and Kenny introduced a widely-used framework for establishing mediation. Their approach involves a series of regression analyses to test the following criteria:
+
+Direct Effect: The predictor (X) significantly affects the outcome (Y).
+Model: 𝑌∼ 𝑋
+
+Mediator Effect: The predictor (X) significantly affects the mediator (M).
+
+Model: 𝑀 ∼𝑋
+
+Mediator’s Impact on Outcome: The mediator (M) significantly affects the outcome (Y) while controlling for the predictor (X).
+
+Model: 𝑌 ∼ 𝑀 + 𝑋
+
+Reduction in Direct Effect: The direct effect of the predictor (X) on the outcome (Y) is smaller when the mediator (M) is included in the model.
+- Compare the direct effect from step 1 to step 3.
+
+
+If these conditions are met, Baron and Kenny concluded that mediation is present. Depending on whether the direct effect of X on Y becomes non-significant (full mediation) or remains significant but reduced (partial mediation), we can categorize the mediation accordingly.
+
+**Using the Stream Analogy for Mediation**
+
+Imagine a river flowing smoothly from point A to point B. The water represents the relationship between the predictor and the outcome. Now, suppose a tributary branches off from the main river, diverting some of the water flow. This tributary symbolizes the mediator.
+
+No Mediation: All water continues directly from A to B with no diversion.
+
+Partial Mediation: Some water flows through the tributary, indicating that part of the relationship is explained by the mediator.
+
+Full Mediation: All water is diverted through the tributary, meaning the relationship between A and B is entirely explained by the mediator.
+
+
+This analogy helps illustrate how mediation can account for varying degrees of influence between variables.
+
+
+### Using Bootstrapping
+
+Traditionally, the Sobel test was employed to assess the significance of mediation effects. However, recent advancements suggest that bootstrapping methods offer superior performance. Bootstrapping is a powerful statistical method that involves repeatedly sampling with replacement from your dataset to estimate the distribution of a statistic. This technique is particularly useful when the assumptions required for traditional parametric tests, such as normality, are not met. In the context of mediation analysis, bootstrapping provides a more reliable way to assess the significance of indirect effects by minimizing the reliance on strict distributional assumptions.
+
+
+
+The Bootstrapping Process:
+
+Resample the Data: Draw a large number of samples (e.g., 1,000) from your dataset, each time selecting observations with replacement. This means some observations may appear multiple times in a single resample, while others may not be selected at all.
+
+Calculate the Statistic: For each resampled dataset, compute the mediation effect. This involves fitting the mediator model (M ~ X) and the outcome model (Y ~ X + M) to estimate the indirect effect.
+
+Build the Distribution: After performing the above steps across all resamples, you'll obtain a distribution of mediation effect estimates.
+
+Determine Confidence Intervals: From this distribution, derive the 95% confidence intervals for the mediation effect. If these intervals do not include zero, the mediation effect is considered statistically significant.
+
+Let's use R to do this:
+
+Using the mediate Package
+
+Here, We'll utilize job dataset (a base data in R). 
+
+Fit the Mediator Model (M ~ X):
+
+```{r}
+
+data("jobs")
+
+df = jobs
+
+b <- lm(job_seek ~ treat, df) # x predicts the mediator
+c <- lm(depress2 ~ treat + job_seek, df) # x and m predict the outcome.
+
+```
+
+
+
+Calculate the direct and indirect effects for each of the 1000 random samples and look at the 95% confidence intervals.
+
+```{r}
+
+mediation <- mediate(b, # Mediator model
+                    c, # Outcome model
+                    sims=1000, # Number of bootstrap samples
+                    boot = T, # Ask for bootstrapped confidence intervals
+                    treat="treat", # Name of the x variable
+                    mediator="job_seek" # Name of the m variable
+                    )
+
+```
+
+
+```{r}
+
+summary(mediation)
+
+```
+
+
+From the result above, we can intepret the result like below-
+
+Average Direct Effect (ADE):
+
+Estimate: -0.0481
+95% Confidence Interval: [-0.1375, 0.04]
+p-value: 0.30
+Interpretation: The direct effect of the independent variable on the outcome is estimated to be -0.0481. However, since the confidence interval includes zero and the p-value is 0.30 (which is above the conventional significance threshold of 0.05), this direct effect is not statistically significant.
+Average Causal Mediation Effect (ACME):
+
+Estimate: -0.0152
+95% Confidence Interval: [-0.0404, 0.01]
+p-value: 0.19
+Interpretation: The indirect effect through the mediator is estimated at -0.0152. Similar to ADE, the confidence interval encompasses zero, and the p-value is 0.19, indicating that the mediation effect is not statistically significant.
+
+
+Total Effect:
+
+Estimate: -0.0633
+95% Confidence Interval: [-0.1569, 0.03]
+p-value: 0.17
+Interpretation: The overall effect of the independent variable on the outcome is estimated at -0.0633. Again, the confidence interval includes zero, and the p-value is 0.17, suggesting that the total effect is not statistically significant.
+Proportion Mediated:
+
+Estimate: 0.2399
+95% Confidence Interval: [-1.5375, 2.99]
+p-value: 0.29
+Interpretation: Approximately 23.99% of the total effect is mediated by the intermediary variable. However, the wide confidence interval, which spans from negative to positive values, and the p-value of 0.29 indicate that this proportion is not statistically significant.
+
+
+
+
+Looking at a plot might help intepret these better. If the horizontal line (the confidence interval) intersects the vertical line (0), then the effect is not significant.
+
+
+```{r}
+
+plot(mediation)
+
+```
+
+
+
+```{r}
+#| echo: false
+#2 * 2
+
+#The `echo: false` option disables the printing of code (only output is displayed).
+
+```
