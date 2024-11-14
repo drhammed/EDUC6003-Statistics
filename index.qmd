@@ -1679,7 +1679,7 @@ Now, we can verify if this actually reduced the multicollinearity
 ```{r}
 # Check the correlations after mean centering
 cor_mat_centered <- data_centering %>%
-  select(social_support_c, work_experience_c, socialXexperience_c) %>%
+  dplyr::select(social_support_c, work_experience_c, socialXexperience_c) %>%
   as.matrix() %>%
   Hmisc::rcorr()
 
