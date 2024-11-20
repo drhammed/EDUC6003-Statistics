@@ -2381,6 +2381,7 @@ The `anova` function performs this comparison, with the LRT degrees of freedom e
 
 ### Structural Model
 
+
 In the previous example, the CFA focused solely on the measurement model—a three-factor model capturing the relationships among the observed variables and their latent constructs, with correlations among the factors. But what if we want to explore how an external variable, such as grade level, predicts the latent intelligence factors (visual, textual, and speed)?
 
 To do this, we extend the model to include structural paths from `grade` to each of the latent variables:
