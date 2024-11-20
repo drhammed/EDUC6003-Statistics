@@ -826,7 +826,6 @@ $$ Y_i = \beta_i + \beta_1X_1 + \beta_2X_2 + \epsilon_i, \hspace4ex i = 1, 2, �
 
 where $\epsilon_i \sim N(0,\alpha^2)$ , $x_{i1}$ = the weight (wt) of the $i$ car, and $x_{i2}$ as the model year (year) of the $i$ car.
 
-
 **Load the data**
 
 ```{r}
@@ -835,9 +834,7 @@ auto <- fread("data/autompg.csv")
 
 ```
 
-
 **Task- before we do for multiple predictors, let's quickly revist SLR and use one predictor. For this part, perform a simple linear regression of mpg against wt. What's the R-squared? is weight a good predictor of mpg? (refer back to the tutorial on SLR- we just covered all of that)!**
-
 
 ```{r}
 #| echo: false
@@ -850,15 +847,11 @@ auto <- fread("data/autompg.csv")
 
 ```
 
-
 Your model summary should look like below.
 
 ![](images/model_summary_mpg_vs_wt-01.PNG){fig-align="center"}
 
-
 *Okay, now that we have done that- we can proceed to multiple linear regression. Recall, we want to build a model with mpg as dependent variable, while wt and year as independent variables.*
-
-
 
 ## Build Multiple Regression in R
 
@@ -874,30 +867,21 @@ summary(mlr_model)
 
 ```
 
-
-
-
 **Questions**
 
-1) Looking at the result, you should see tables that are similar to the ones in our previous example (our model summary is new). Take a look at the "model summary" to determine the new R squared and Standard Error of the Estimate. Compare that with the previous regression output- ***has the inclusion of additional variables (year) resulted in an improvement in our model***?
-
+1)  Looking at the result, you should see tables that are similar to the ones in our previous example (our model summary is new). Take a look at the "model summary" to determine the new R squared and Standard Error of the Estimate. Compare that with the previous regression output- ***has the inclusion of additional variables (year) resulted in an improvement in our model***?
 
 Note- *the new R squared has improved, and the Standard Error has reduced! This indicates that our multiple regression model is more precise than the previous linear regression model.*
 
+2)  ***Do all our variables hold statistical significance***?
 
+You can verify this by checking the table. The Pr(\> t\|) indicate whether our independent variables have a statistically significant association with our dependent variable. It also helps us determine whether our model is a good fit for explaining the variation in the mpg.
 
-2) ***Do all our variables hold statistical significance***?
-
-You can verify this by checking the table. The Pr(> t|) indicate whether our independent variables have a statistically significant association with our dependent variable. It also helps us determine whether our model is a good fit for explaining the variation in the mpg.
-
-In our case, we have evidence to believe it is, given that the significance  is way below 0.05 (<0.001).
+In our case, we have evidence to believe it is, given that the significance is way below 0.05 (\<0.001).
 
 Lastly, check the "estimate" column. Here we find the value for each of our independent variables (wt and year) and also the intercept.
 
-
 So, how can we write our multiple regression equation? mpg (*Y*) = -14.64 -- 0.0066(weight) + 0.761(year). Thus, if we added a new car and had some basic data like the year and weight, we would be able to estimate, with a relatively high degree of confidence, how many mpg would be used given the predictors.
-
-
 
 **Interpretation**
 
@@ -921,12 +905,7 @@ vif_mod
 
 ```
 
-
-
-The VIF values indicate the degree of multicollinearity for each variable in the model. In our case, the VIF (for both wt and year) is around 1.104. Ideally, a VIF of 1 means that variables are not correlated and no multicollinearity in the regression model. Generally, a VIF >6 is considered a sign of high multicollinearity between the predictor variables and can affect the stability and interpretability of your regression model. You may need to address multicollinearity by either removing one of the correlated variables (redundant) or you can use dimensionality reduction techniques like Principal Component Analysis (PCA) to reduce dimensions.
-
-
-
+The VIF values indicate the degree of multicollinearity for each variable in the model. In our case, the VIF (for both wt and year) is around 1.104. Ideally, a VIF of 1 means that variables are not correlated and no multicollinearity in the regression model. Generally, a VIF \>6 is considered a sign of high multicollinearity between the predictor variables and can affect the stability and interpretability of your regression model. You may need to address multicollinearity by either removing one of the correlated variables (redundant) or you can use dimensionality reduction techniques like Principal Component Analysis (PCA) to reduce dimensions.
 
 # Chapter 4- Least Square Approach
 
@@ -967,8 +946,6 @@ ggplot(st_data, aes(x = ht, y = wt)) +
 
 ```
 
-
-
 Looking at the plot, do you think this line best summarizes the trend between the students height and weight?
 
 Before we proceed, let's introduce equation of the best fitting line.
@@ -983,19 +960,15 @@ where:
 
 -   $x_i$ denotes the predictor value for experimental unit *i*
 
-
 Now, let's apply this formula on the plot above. Remember from the plot above, our regression equation is $\hat{y}$ = -266.53 + 6.14x or $\hat{weight}$ = -266.53 + 6.14 height
 
 The first data on the plot shows that student 1 has a height of 63 inches and a weight of around 127 pounds (i.e. $x_1$ = 63 and $y_1$ = 127). Assuming we know this student's height but not weight, we could use the equation of the line to predict the student's weight. Thus, we'd predict the student's weight to be -266.53 + 6.14(63) or 120.29 pounds. Which means our predicted y ($\hat{y}$) = 120.29 pounds. Apparently, this is not the same as can be seen on the plot ($y_1$ = 127) and this means we have **prediction** or **residual error**. As a matter of fact, the residual error can be calculated as 127-120.29= 6.71 pounds. You can do the same for all values of x (heights) and get your observed (y) responses, your predicted responses and residual errors. In summary, when we use the equation $\hat{y} = \beta_0 + \beta_1 x_1$ to make prediction of the actual response of $y_i$, we make prediction or residual error $e_i = y_i - \hat{y}$ (which means that the size of the residual error depends on the data point).
-
-
 
 An important question, however, is "What is the best fitting line or how do we define a good line"? There are several lines we could use, and our aim is to identify one that is characterized by "minimal errors." In other words, a line that fits the data "**best**" will be one where the ***n*** **prediction errors, ---** each corresponding to an observed data point **--- are minimized overall**. The next question is then, how do we identify such a line? There are numerous methods we could employ for this purpose. One way to achieve this is by applying the "**least squares approach**" which means we need to find the line that "minimizes the sum of squared prediction errors. In other words, we need to find the values of $b_0$ and $b_1$ that can make the sum of the squared residual errors as minimal as possible.
 
 Mathematically, we need to find the values of $b_0$ and $b_1$ that minimizes
 
 $$\text Q = \sum^{n}_{i==1} (y_i - \hat{y})^2$$
-
 
 Where our
 
@@ -1021,12 +994,9 @@ and:
 
 ![](images/b1_form-02.PNG){fig-align="center"}
 
-
-
 Given that the formulas for $b_0$ and $b_1$ are derived using the least square approach, you may see the regression equation being referred to as the **least squares line, least squares regression line or the estimated regression equation**. However, it is important to note that in this approach, we've made no distributional assumption about the data. We assumed they're fixed and not random and follow a linear trend.
 
 Ideally, you won't have to worry about the formulas for $b_0$ and $b_1$ and this is because, there are so many statistical software that can find the least squares for you. However, a question that often pop-up is that- why do we try to minimize the sum of *squared* errors rather than just the errors themselves? The reason is that if we didn't square the residual error above, the positive and negative residual errors would cancel each other out when we sum them, consequently yielding 0. This approach is referred to as *least squares* because it aims to *minimize* the sum of *squared* errors, thereby seeking to determine *the least squares.*
-
 
 ### Example of Least Square Approach using data
 
@@ -1038,11 +1008,7 @@ From the data, note that our x = speed and y = dist. From your data, we need to 
 
 So, compute Sxy, Sxx, Syy
 
-Sxy = sum((x - mean(x)) * (y - mean(y)))
-Sxx = sum((x - mean(x)) ^ 2)
-Syy = sum((y - mean(y)) ^ 2)
-c(Sxy, Sxx, Syy)
-
+Sxy = sum((x - mean(x)) \* (y - mean(y))) Sxx = sum((x - mean(x)) \^ 2) Syy = sum((y - mean(y)) \^ 2) c(Sxy, Sxx, Syy)
 
 ```{r}
 
@@ -1069,16 +1035,11 @@ c(Sxy = Sxy, Sxx = Sxx, Syy = Syy)
 
 ```
 
-
-
-
 Finally, we need to calculate the $\hat{b_0}$ and $\hat{b_1}$
 
 $\hat{\beta_1}$ = Sxy / Sxx
 
 $\hat{\beta_0}$ = mean(y) - $\hat{\beta_1}$ \* mean(x)
-
-
 
 ```{r}
 
@@ -1115,7 +1076,6 @@ In a very brief term, the intercept (or $\hat{\beta_0}$) represent the value of 
 
 Here, the $\hat{\beta_0}$ tells us that a vechicle travelling at zero mile per hour is predicted to have -17.58 stopping distance. In other words, the estimated mean stopping distance for a car not moving is−17.58 ft. Obviously this doesn't make sense, because does that mean when you apply the brakes to a car that is not moving, it moves backwards? Anyways this is not surprising becuase we "extrapolated" beyond the range of the x values (model scope). It doesn't make sense to say you're travelling at speed of zero miles per hour (so intercept here doesn't make much sense)! More information on extrapolation can be found in this [blog](https://blog.minitab.com/en/adventures-in-statistics-2/regression-analysis-how-to-interpret-the-constant-y-intercept) and we will see more of it shortly below in the tutorial.
 
-
 ### Predictions
 
 Let's rewrite the estimated regression line
@@ -1132,7 +1092,7 @@ We can now use this equation to make predictions. If you check the data, the spe
 
 **Question 1**- Can we make a prediction for the stopping distance of a car traveling at 9 miles per hour?.
 
-***Hint- It's easy, slot in 9 in the equation above (***$-17.58 + 3.93speed$***). Your answer should be ~17.79 (***This tells us that the estimated mean stopping distance of a car traveling at 9 miles per hour is 17.79***).***
+***Hint- It's easy, slot in 9 in the equation above (***$-17.58 + 3.93speed$***). Your answer should be \~17.79 (***This tells us that the estimated mean stopping distance of a car traveling at 9 miles per hour is 17.79***).***
 
 **In the same way, we can make predictions for unknown data or unseen time point.** For example,
 
@@ -1143,9 +1103,6 @@ Finally, we can make a prediction for the stopping distance of a car that is out
 **Question 3-** make a prediction for the stopping distance of a car traveling at 100 miles per hour. This is extrapolation as 100 is not within the range of speed and not an observed value. So, we are only transferring our model to that time point (learning from the model- Machine Learning)! ***Your answer should be = 375.42ft***
 
 Although cars can travel 100 miles per hour today (although with fines from police), but maybe not many years ago! This is quite similar to the similar issue when interpreting $\hat{b_0} = -17.58$ (that is estimated mean stopping distance when speed = 0). This implies that we should be less confident in the estimated linear relationship outside our data range.
-
-
-
 
 ### Residuals
 
@@ -1158,9 +1115,6 @@ Answer, dist == 10.
 Then, we calculate our $e = 10 - 17.81$ = -7.81.
 
 The negative residual value indicates that the observed stopping distance is actually 7.81 feet less than what was predicted.
-
-
-
 
 ### Estimating the Variance
 
@@ -1186,18 +1140,13 @@ variance
 
 ```
 
-
-
 Similar to the univariate measure of variance, variance = 236.53 lacks a meaningful practical interpretation in this context of stopping distance. However, by taking the square root, we can obtain the standard deviation of the residuals, often referred to as the *residual standard error.*
 
 **Question- take the square root to compute the residual standard error**
 
-Your residual standard error should be ~ **15.38.**
+Your residual standard error should be \~ **15.38.**
 
 **Interpretation**- This indicates that our average estimates of stopping distance are generally inaccurate by approximately 15.38 feet.
-
-
-
 
 ### Variation Decomposition
 
@@ -1229,7 +1178,6 @@ Now, you can use the formula of each of them to calculate their values in R.
 
 -   SSE = sum((y - y_hat) \^ 2)
 
-
 ```{r}
 
 # Total Sum of Squares (SST)
@@ -1247,8 +1195,6 @@ c(SST = SST, SSReg = SSReg, SSE = SSE)
 
 ```
 
-
-
 When looking at these 3 metrics individually, they kind of lack a significant practical interpretation. However, we will see now and we can use them collectively to show a new statistic that can measure the strength of regression model.
 
 ### Coefficient of Determination
@@ -1263,7 +1209,6 @@ $$R^2 = 1- \frac {SSE} {SST}$$
 
 **Question**- compute the $R^2$ for our example data in R
 
-
 ```{r}
 
 # Calculate r-squared
@@ -1274,70 +1219,51 @@ R_squared
 
 ```
 
-
-
 Interpretation- From our example dataset, our calculated $R^2$ = 0.65. Thus, we can conclude that 65% of the observed variation in stopping distance can be explained by the linear relationship with speed.
-
-
-
-
-
 
 # Chapter 5 - Moderation and Mediation Analysis
 
 Moderation
 
-
 In many cases, the relationship we want to explore extend beyond a simple pair of variables interacting with each other. Often, additional elements may shape the dynamics of these relationships. For example, there might be underlying factors that modify how two variables are connected or provide reasons for their association. These questions are important for a deeper understanding but cannot be addressed using the basic methods like a simple linear regression, for example. Those methods were limited to examining the direct effect between two variables (say X and Y) without the flexibility to incorporate extra factors that might be at play.
 
-Moderation and mediation analyses allow us to incorporate one or more additional variables into our models, giving us a more comprehensive view of how various factors might influence the relationship between two primary variables. In a very basic way, moderation and mediation introduce an extra variable to the existing relationship. While it is possible to include multiple moderating or mediating variables, it is generally less common due to the added complexity and the challen
-ges associated with interpreting such complex models. When adding a single additional variable, these methods help us address specific questions:
+Moderation and mediation analyses allow us to incorporate one or more additional variables into our models, giving us a more comprehensive view of how various factors might influence the relationship between two primary variables. In a very basic way, moderation and mediation introduce an extra variable to the existing relationship. While it is possible to include multiple moderating or mediating variables, it is generally less common due to the added complexity and the challen ges associated with interpreting such complex models. When adding a single additional variable, these methods help us address specific questions:
 
-- **Moderation:** How does the strength or direction of the relationship between variables X and Y change at different levels of a third variable, M?
+-   **Moderation:** How does the strength or direction of the relationship between variables X and Y change at different levels of a third variable, M?
 
-- **Mediation:** Does a third aditional variable, M, serve as a mechanism through which X influences Y?
+-   **Mediation:** Does a third aditional variable, M, serve as a mechanism through which X influences Y?
 
 In this tutorial, we will cover the application of both moderation and mediation analyses using R. Essentially, you will learn the steps to perform these analyses, as well as how to interpret the outcomes.
-
-
 
 ## Understanding Moderation in Statistical Analysis
 
 Moderation examines how the relationship between two variables is influenced by a third variable. Specifically, it assesses the extent to which the impact of one variable on another varies depending on the level or presence of an additional variable.
 
-**Assumptions Regarding the Dependent Variable:** 
+**Assumptions Regarding the Dependent Variable:**
 
 Moderation analysis relies on linear regression techniques, so the outcome variable should be **continuous**. Also, the predictors in the model can be either continuous or categorical (binary).
 
 As with regression analysis, there are assumptions that are quite important here:
 
-- **Linearity:** A crucial assumption for moderation is that the interaction between the variables is linear. This implies that the effect of the independent variable (X) on the dependent variable (Y) changes at a consistent rate as the moderator variable (M) increases or decreases. Moreover, the primary relationship between X and Y should also be **linear**. Ensuring both the moderation effect and the original relationship are linear is essential for accurate interpretation.
+-   **Linearity:** A crucial assumption for moderation is that the interaction between the variables is linear. This implies that the effect of the independent variable (X) on the dependent variable (Y) changes at a consistent rate as the moderator variable (M) increases or decreases. Moreover, the primary relationship between X and Y should also be **linear**. Ensuring both the moderation effect and the original relationship are linear is essential for accurate interpretation.
 
-- **Other Assumptions:** Beyond linearity, moderation shares the same assumptions as multiple regression, such as homoscedasticity, independence of errors, and normality of residuals.
+-   **Other Assumptions:** Beyond linearity, moderation shares the same assumptions as multiple regression, such as homoscedasticity, independence of errors, and normality of residuals.
 
 So, essentially, moderation analysis allows us to determine whether the relationship between two variables is shaped by a third variable. For accurate interpretation, both the moderation effect and the direct relationship between the primary variables should show linearity. Aside from this, moderation operates under the standard assumptions of multiple regression.
 
 When we say that a moderator influences the relationship between two other variables, we mean that the nature or strength of that relationship changes based on the level or category of the moderator. In other words, the relationship between X and Y isn't uniform across all conditions but varies with moderator M.
 
-
-
-
-
 ### Exploring Moderation and Its Relationship to Interaction
 
 As in any statistical models, we have to evaluate moderation effects through statistical methods. Ideally, if you visualize the relationship between two variables across different levels of a moderator and notice that the regression lines are not parallel, this indicates **moderation**. Why is that? Parallel lines suggest that the relationship between the two primary variables remains constant regardless of the moderator's level, meaning the moderator doesn't influence the relationship. However, if the lines have different slopes, it signifies that the strength or direction of the relationship changes depending on the moderator.
 
-
 ![Moderation Effect Plot](images/interaction_1.png){fig-align="center"}
-
 
 You might have heard of **interaction** terms before? This is technically the same logic. We say we have *interaction* when the effect of one variable on an outcome depends on the level of another variable. Essentially, this is what we're observing with moderation. In fact, we call the graph illustrating non-parallel slopes as an "interaction plot" rather than a "moderation plot." So, how do moderation and interaction differ?
 
 I'd say the distinction between moderation and interaction is subtle and primarily lies in their interpretation rather than their mathematical foundation. Moderation implies a specific primary relationship: Variable X influences Variable Y, and Variable M alters this influence. In contrast, an interaction doesn't necessarily assume a direct primary relationship. It simply indicates that both X and M are related to Y and that their combined effect on Y is not purely additive. This means that the relationship between X and Y might vary at different levels of M, or alternatively, the relationship between M and Y might change depending on the level of X. The interaction can work in either direction.
 
 ![Moderation](images/mediation_model_1.png){fig-align="center"}
-
-
 
 ### Example – Age as a Moderator
 
@@ -1352,16 +1278,13 @@ However, we might wonder if this positive relationship is true for all employees
 
 **Hypothesis:**
 
-- **Younger Employees:** Might benefit more from professional development hours as they are still building their skills and knowledge.
+-   **Younger Employees:** Might benefit more from professional development hours as they are still building their skills and knowledge.
 
-- **Older Employees:** May experience a different level of impact, possibly due to having more established skills or different learning preferences.
-
-
+-   **Older Employees:** May experience a different level of impact, possibly due to having more established skills or different learning preferences.
 
 **Simulating Data in R:**
 
 To test this moderation effect, we can simulate some data in R. Here’s a basic example:
-
 
 ```{r}
 
@@ -1397,7 +1320,6 @@ employee_data <- employee_data %>%
                   50 + 1 * professional_hours + rnorm(500, 0, 1.5)))
 ```
 
-
 Now, we can fit the model. We are interested in how age influences the relationship between hours spent on professional development activities (professional_hours) and overall job performance (job_performance).
 
 ```{r}
@@ -1411,26 +1333,19 @@ mod
 
 ```
 
+From the result above, we can see Intercept \~ 184.78251. This value represents the estimated job performance score for an employee who has zero hours of professional development. While an employee with no professional development hours is unlikely in a real-world scenario, the intercept provides a baseline for the model.
 
-From the result above, we can see Intercept ~ 184.78251. This value represents the estimated job performance score for an employee who has zero hours of professional development. While an employee with no professional development hours is unlikely in a real-world scenario, the intercept provides a baseline for the model.
+Professional Development Hours (3.25): The coefficient for professional_hours is 3.25, which is highly significant (p-value \< 2e-16). This means that we have a strong positive relationship between professional development hours and job performance. Also, for each additional hour an employee spends on professional development activities, their job performance score is expected to increase by approximately 3.25 units, holding age constant.
 
-Professional Development Hours (3.25): The coefficient for professional_hours is 3.25, which is highly significant (p-value < 2e-16). This means that we have a strong positive relationship between professional development hours and job performance. Also, for each additional hour an employee spends on professional development activities, their job performance score is expected to increase by approximately 3.25 units, holding age constant.
+Age (-3.35): Each additional year of age is associated with a 3.35-unit decrease in job performance score, holding professional development hours constant. This negative relationship is also highly significant (p \< 2e-16), suggesting that older employees in this sample tend to have lower job performance scores when controlling for their professional development hours.
 
-Age (-3.35): Each additional year of age is associated with a 3.35-unit decrease in job performance score, holding professional development hours constant. This negative relationship is also highly significant (p < 2e-16), suggesting that older employees in this sample tend to have lower job performance scores when controlling for their professional development hours.
-
-
-Statistical Significance: The p-value associated with professional_hours and age is < 0.001. This confirms that the relationship between our independent variables  and dependent variable (job performance) is statistically significant at all conventional level of significance.
+Statistical Significance: The p-value associated with professional_hours and age is \< 0.001. This confirms that the relationship between our independent variables and dependent variable (job performance) is statistically significant at all conventional level of significance.
 
 Model Fit:
 
-Multiple R-squared (0.7578): Approximately 75.78% of the variability in job performance is explained by professional development hours alone.
-Adjusted R-squared (0.7568): After adjusting for the number of predictors, about 75.68% of the variance in job performance is explained by the model.
-F-statistic (777.4, p < 2.2e-16): The overall model is statistically significant, suggesting that professional development hours reliably predict job performance.
-
+Multiple R-squared (0.7578): Approximately 75.78% of the variability in job performance is explained by professional development hours alone. Adjusted R-squared (0.7568): After adjusting for the number of predictors, about 75.68% of the variance in job performance is explained by the model. F-statistic (777.4, p \< 2.2e-16): The overall model is statistically significant, suggesting that professional development hours reliably predict job performance.
 
 **Please note: Due to stochasticity, the values above may change slightly when you run yours since we're using simulated data - but it should not change that much.**
-
-
 
 **Note:**
 
@@ -1438,10 +1353,7 @@ The coefficients represent the unique main effects of each predictor. Specifical
 
 While this model highlights the direct individual relationships, it does not inform us about whether the effect of professional development hours on job performance varies by age. In other words, we haven’t yet tested if age moderates the relationship between professional development and job performance.
 
-
-
 To explore whether age acts as a moderator, we need to include an interaction (moderation) term between professional_hours and age in our model. This will allow us to assess if the impact of professional development on job performance differs across different age groups.
-
 
 ```{r}
 # Finally, fit a moderation model
@@ -1450,22 +1362,19 @@ summary(model)
 
 ```
 
-
 From the result above, we observe that the $R^2$ value has increased from 0.7578 in the initial multiple regression model to 0.9988 after introducing the interaction/moderation term. This increase indicates that the model with the interaction term fits the data significantly better. Additionally, once we add the interaction between professional_hours and age_group, the unique effect of age_group becomes non-significant. Why does this shift occur? By including the interaction, we appropriately attribute variance to the combined effect of professional_hours and age_group rather than isolating their individual linear effects. This adjustment provides a more accurate representation of each variable's unique impact. It's important to remember that in regression modeling, each coefficient reflects the unique main effect of its corresponding variable while controlling for the others in the model.
 
 Looking at the interaction/moderation term, it appears to be highly significant. But what does this imply? Moderation effects can be complex to interpret, so visualizing the relationship with a graph is often helpful. However, before we create the plot, let's attempt to understand it conceptually.
 
 Recall that the interaction term models how the relationship between professional_hours and job_performance varies based on age_group.
 
-In our model, the coefficient for the interaction term is 3.97368. This means that the effect of professional_hours on job_performance is 3.97368 units stronger for the "Younger" age group compared to the "Older" age group. 
+In our model, the coefficient for the interaction term is 3.97368. This means that the effect of professional_hours on job_performance is 3.97368 units stronger for the "Younger" age group compared to the "Older" age group.
 
 Specifically:
 
-*For Older Employees:*
-The effect of professional_hours on job_performance is 1.00426 (the coefficient for professional_hours).
+*For Older Employees:* The effect of professional_hours on job_performance is 1.00426 (the coefficient for professional_hours).
 
-*For Younger Employees:*
-The effect of professional_hours on job_performance is 1.00426 + 3.97368 = 4.97794.
+*For Younger Employees:* The effect of professional_hours on job_performance is 1.00426 + 3.97368 = 4.97794.
 
 This indicates that professional development hours have a significantly stronger positive impact on job performance for Younger employees than for Older employees. In other words, the relationship between professional development and job performance is contingent upon the employee's age group—a classic case of moderation.
 
@@ -1473,16 +1382,11 @@ What Does This Mean for Our Study?
 
 The interaction suggests that the effectiveness of professional development activities in enhancing job performance varies by age. We can say that younger employees benefit more from additional professional development hours compared to their older counterparts.
 
+-   **Main Effect of Professional Hours:** Indicates the overall relationship between professional development hours and job performance.
 
+-   **Main Effect of Age Group:** Shows any direct differences in job performance between younger and older employees, regardless of professional hours.
 
-
-- **Main Effect of Professional Hours:** Indicates the overall relationship between professional development hours and job performance.
-
-- **Main Effect of Age Group:** Shows any direct differences in job performance between younger and older employees, regardless of professional hours.
-
-- **Interaction Term (professional_hours:age_group):** Reveals whether the relationship between professional hours and job performance differs by age group.
-
-
+-   **Interaction Term (professional_hours:age_group):** Reveals whether the relationship between professional hours and job performance differs by age group.
 
 **Visualization:**
 
@@ -1503,9 +1407,7 @@ interactions::interact_plot(mod1, "professional_hours", modx = "age_group",
 
 ```
 
-
 We can also use ggplot to do the same thing
-
 
 ```{r}
 
@@ -1522,10 +1424,7 @@ ggplot(employee_data, aes(x = professional_hours, y = job_performance, color = a
 
 ```
 
-
-
 The interaction plot shows that job performance increases with professional hours for both younger and older employees. However, the effect is much stronger for younger employees, as indicated by the steeper slope of their line compared to that of the older employees. This suggests that younger employees' job performance is more positively influenced by additional professional hours than that of older employees. By visualizing the interaction, We can see that age_group moderates the relationship between professional_hours and job_performance.
-
 
 ### Example 2- Moderation with a Continuous Moderator
 
@@ -1534,7 +1433,6 @@ So far, we've conducted moderation analyses using categorical moderators, such a
 Consider the following scenario: Suppose we believe that the amount of social support an employee receives influences their job satisfaction, but we're unsure if this relationship remains consistent across different levels of work experience. One reason for this uncertainty is that the impact of social support might vary depending on an employee's years of experience. For instance, more experienced employees might utilize social support differently compared to their less experienced counterparts, potentially leading to varying effects on job satisfaction. Also, even if all employees receive similar levels of social support, the direct effect on their job satisfaction could differ based on their work experience, as more seasoned employees may have developed distinct coping strategies over time. Therefore, let's investigate whether work experience moderates the relationship between social support and job satisfaction: Does the effect of social support on job satisfaction change depending on an employee’s level of work experience? Let’s explore this further.
 
 Again, let's simulate data in R (of course you can use your own data if you have):
-
 
 ```{r}
 
@@ -1562,15 +1460,11 @@ data2 <- data2 %>%
 
 ```
 
-
-
-Here, we are examining how social support (the predictor variable) affects job satisfaction (the outcome variable) and whether this relationship is influenced by work experience (the continuous moderator). 
-
+Here, we are examining how social support (the predictor variable) affects job satisfaction (the outcome variable) and whether this relationship is influenced by work experience (the continuous moderator).
 
 **Conducting the Moderation Analysis**
 
 To test whether work experience moderates the relationship between social support and job satisfaction, we can include an interaction term in our regression model. This interaction term allows us to assess if the slope of the relationship between social support and job satisfaction changes at different levels of work experience.
-
 
 ```{r}
 # Fit the moderation model with interaction term
@@ -1583,16 +1477,13 @@ summary(mod_model)
 
 ```
 
+From the result above, we can see the estimate of social support as 0.47. This means that for each additional unit increase in social support, job satisfaction increases by 0.47 units, holding work experience constant. Also, we can see a significant (p \< 2e-16) positive relationship.
 
-From the result above, we can see the estimate of social support as 0.47. This means that for each additional unit increase in social support, job satisfaction increases by 0.47 units, holding work experience constant. Also, we can see a significant (p < 2e-16) positive relationship.
+Work Experience (0.78): For each additional year of work experience, there will be corresponding 0.78-unit increase in job satisfaction, holding social support constant.
 
-Work Experience (0.78): For each additional year of work experience, there will be corresponding 0.78-unit increase in job satisfaction, holding social support constant. 
-
-The intereaction term  (estimate ~ 0.06) is also significant, which means that work experience moderates the relationship between social support and job satisfaction.. The positive interaction term indicates that the effect of social support on job satisfaction increases by 0.06 units for each additional year of work experience.
-
+The intereaction term (estimate \~ 0.06) is also significant, which means that work experience moderates the relationship between social support and job satisfaction.. The positive interaction term indicates that the effect of social support on job satisfaction increases by 0.06 units for each additional year of work experience.
 
 Thus, we can conclude by saying that the positive interaction suggests that social support has a stronger positive effect on job satisfaction for employees with more work experience compared to those with less experience. For less experienced employees, the impact of social support on job satisfaction is positive but less pronounced.
-
 
 Again, we can visualize the Moderation Effect. Like previous example, we can use the interact_plot function from the interactions package to create an interaction plot.
 
@@ -1609,9 +1500,7 @@ interactions::interact_plot(mod_model, pred = social_support, modx = work_experi
 
 ```
 
-
 The interaction plot shows how work experience moderates the relationship between social support and job satisfaction. The x-axis represents social support levels, while each line corresponds to a different level of work experience (+1 SD, Mean, -1 SD). The slope of each line indicates the strength of the positive relationship between social support and job satisfaction. Steeper slopes suggest a stronger positive relationship, meaning that increases in social support are associated with greater increases in job satisfaction for more experienced employees. Also, flatter slopes indicate a weaker effect for employees with less work experience.
-
 
 ## Mean Centering in Moderation Models
 
@@ -1626,8 +1515,7 @@ mod_model <- lm(job_satisfaction ~ social_support * work_experience, data = data
 
 ```
 
-
-In models like this, we may have concerns about the structure of the current setup. The main issue is **multicollinearity**, which occurs when predictor variables are highly correlated. In our model, we’ve included both social_support and work_experience as individual predictors, alongside their interaction term (social_support * work_experience). This setup can lead to high correlations between the interaction term and the main effects, complicating the interpretation of each predictor's unique contribution.
+In models like this, we may have concerns about the structure of the current setup. The main issue is **multicollinearity**, which occurs when predictor variables are highly correlated. In our model, we’ve included both social_support and work_experience as individual predictors, alongside their interaction term (social_support \* work_experience). This setup can lead to high correlations between the interaction term and the main effects, complicating the interpretation of each predictor's unique contribution.
 
 But does multicollinearity pose a significant problem in this context? To address this, we need to create the interaction term explicitly and then examine its correlation with the primary predictors. By doing so, we can assess the extent of multicollinearity and decide whether mean centering is necessary to mitigate its effects.
 
@@ -1653,11 +1541,9 @@ cor_mat
 
 ```
 
-
-As seen above, the correlation between social_support and the interaction term socialXexperience is high (r = 0.73), and similarly, work_experience is r = 0.68 with socialXexperience. These high correlation values indicate that the interaction term shares a significant amount of variance with the main predictors, which may indicate potential multicollinearity issues. 
+As seen above, the correlation between social_support and the interaction term socialXexperience is high (r = 0.73), and similarly, work_experience is r = 0.68 with socialXexperience. These high correlation values indicate that the interaction term shares a significant amount of variance with the main predictors, which may indicate potential multicollinearity issues.
 
 So, this raises an important question: Should we abandon our moderation analysis due to this multicollinearity? Not really. A widely adopted solution to this problem is **mean centering**. Mean centering involves subtracting the mean of each predictor from its individual values, effectively transforming the variables so that they have a mean of zero. This process retains the original ranking of the data (individuals with higher scores remain higher, and vice versa) but reduces the correlation between the main predictors and the interaction term.
-
 
 To perform mean centering, we can use the scale() function in R with the argument scale = FALSE. This ensures that we center the variables without scaling them to unit variance. We will create mean-centered versions of each predictor and the interaction term as follows:
 
@@ -1673,7 +1559,6 @@ data_centering <- data2 %>%
 
 
 ```
-
 
 Now, we can verify if this actually reduced the multicollinearity
 
@@ -1693,8 +1578,6 @@ cor_mat_centered
 
 As expected, the correlations between the main predictors and the interaction term are now technically zero- so no multicollinearity.
 
-
-
 Finally, let's refit the Moderation Model with Centered Variables
 
 ```{r}
@@ -1706,13 +1589,9 @@ summary(centered_model)
 
 ```
 
+The coefficients in this centered model will differ slightly from those in the uncentered model, but they represent the same underlying relationships. Importantly, we can see that the interaction term remains unchanged in magnitude and significance, indicating that the moderation effect is consistent. However, the interpretation of the main effects becomes different a bit:
 
-The coefficients in this centered model will differ slightly from those in the uncentered model, but they represent the same underlying relationships. Importantly, we can see that the interaction term remains unchanged in magnitude and significance, indicating that the moderation effect is consistent. 
-However, the interpretation of the main effects becomes different a bit:
-
-Social Support (social_support_c): This is the effect of social support on job satisfaction when work_experience_c is zero (i.e., at the mean work experience).
-Work Experience (work_experience_c): Represents the effect of work experience on job satisfaction when social_support_c is zero (i.e., at the mean social support).
-
+Social Support (social_support_c): This is the effect of social support on job satisfaction when work_experience_c is zero (i.e., at the mean work experience). Work Experience (work_experience_c): Represents the effect of work experience on job satisfaction when social_support_c is zero (i.e., at the mean social support).
 
 Lastly, let's visualize our interaction plot
 
@@ -1730,13 +1609,9 @@ interactions::interact_plot(centered_model, pred = social_support_c, modx = work
 
 Here, the plot shows that as social support increases, job satisfaction rises more sharply for employees with greater work experience compared to those with less experience.
 
-
-
 ## Mediation
 
-
-In many cases, we want to understand not just whether variables are related, but how they are related This is where mediation analysis comes in. Mediation helps us determine whether the relationship between a predictor variable and an outcome variable can be linked to an intermediate variable, known as the mediator. 
-
+In many cases, we want to understand not just whether variables are related, but how they are related This is where mediation analysis comes in. Mediation helps us determine whether the relationship between a predictor variable and an outcome variable can be linked to an intermediate variable, known as the mediator.
 
 Consider a scenario where implementing a new teaching strategy—such as encouraging students to take handwritten notes instead of typing them on a laptop—leads to improved academic performance. At first, there appears to be a direct effect of the teaching method on learning outcomes. However, to truly understand why this improvement occurs, we might investigate whether taking handwritten notes encourages students to process information more deeply, thereby enhancing their learning.
 
@@ -1752,14 +1627,11 @@ For example, if we collect cross-sectional data on traits like neuroticism, stat
 
 Therefore, when conducting or interpreting mediation analyses, it’s essential to have a strong (theoretical) rationale for assigning roles to each variable and to consider the design of the study to support causal claims.
 
-
-
 ### Traditional Mediation Analysis and the Baron & Kenny Approach
 
 In 1986, Baron and Kenny introduced a widely-used framework for establishing mediation. Their approach involves a series of regression analyses to test the following criteria:
 
-Direct Effect: The predictor (X) significantly affects the outcome (Y).
-Model: 𝑌∼ 𝑋
+Direct Effect: The predictor (X) significantly affects the outcome (Y). Model: 𝑌∼ 𝑋
 
 Mediator Effect: The predictor (X) significantly affects the mediator (M).
 
@@ -1769,9 +1641,7 @@ Mediator’s Impact on Outcome: The mediator (M) significantly affects the outco
 
 Model: 𝑌 ∼ 𝑀 + 𝑋
 
-Reduction in Direct Effect: The direct effect of the predictor (X) on the outcome (Y) is smaller when the mediator (M) is included in the model.
-- Compare the direct effect from step 1 to step 3.
-
+Reduction in Direct Effect: The direct effect of the predictor (X) on the outcome (Y) is smaller when the mediator (M) is included in the model. - Compare the direct effect from step 1 to step 3.
 
 If these conditions are met, Baron and Kenny concluded that mediation is present. Depending on whether the direct effect of X on Y becomes non-significant (full mediation) or remains significant but reduced (partial mediation), we can categorize the mediation accordingly.
 
@@ -1785,21 +1655,17 @@ Partial Mediation: Some water flows through the tributary, indicating that part 
 
 Full Mediation: All water is diverted through the tributary, meaning the relationship between A and B is entirely explained by the mediator.
 
-
 This analogy helps illustrate how mediation can account for varying degrees of influence between variables.
-
 
 ### Using Bootstrapping
 
 Traditionally, the Sobel test was employed to assess the significance of mediation effects. However, recent advancements suggest that bootstrapping methods offer superior performance. Bootstrapping is a powerful statistical method that involves repeatedly sampling with replacement from your dataset to estimate the distribution of a statistic. This technique is particularly useful when the assumptions required for traditional parametric tests, such as normality, are not met. In the context of mediation analysis, bootstrapping provides a more reliable way to assess the significance of indirect effects by minimizing the reliance on strict distributional assumptions.
 
-
-
 The Bootstrapping Process:
 
 Resample the Data: Draw a large number of samples (e.g., 1,000) from your dataset, each time selecting observations with replacement. This means some observations may appear multiple times in a single resample, while others may not be selected at all.
 
-Calculate the Statistic: For each resampled dataset, compute the mediation effect. This involves fitting the mediator model (M ~ X) and the outcome model (Y ~ X + M) to estimate the indirect effect.
+Calculate the Statistic: For each resampled dataset, compute the mediation effect. This involves fitting the mediator model (M \~ X) and the outcome model (Y \~ X + M) to estimate the indirect effect.
 
 Build the Distribution: After performing the above steps across all resamples, you'll obtain a distribution of mediation effect estimates.
 
@@ -1809,9 +1675,9 @@ Let's use R to do this:
 
 Using the mediate Package
 
-Here, We'll utilize job dataset (a base data in R). 
+Here, We'll utilize job dataset (a base data in R).
 
-Fit the Mediator Model (M ~ X):
+Fit the Mediator Model (M \~ X):
 
 ```{r}
 
@@ -1823,8 +1689,6 @@ b <- lm(job_seek ~ treat, df) # x predicts the mediator
 c <- lm(depress2 ~ treat + job_seek, df) # x and m predict the outcome.
 
 ```
-
-
 
 Calculate the direct and indirect effects for each of the 1000 random samples and look at the 95% confidence intervals.
 
@@ -1840,48 +1704,27 @@ mediation <- mediate(b, # Mediator model
 
 ```
 
-
 ```{r}
 
 summary(mediation)
 
 ```
 
-
 From the result above, we can intepret the result like below-
 
 Average Direct Effect (ADE):
 
-Estimate: -0.0481
-95% Confidence Interval: [-0.1375, 0.04]
-p-value: 0.30
-Interpretation: The direct effect of the independent variable on the outcome is estimated to be -0.0481. However, since the confidence interval includes zero and the p-value is 0.30 (which is above the conventional significance threshold of 0.05), this direct effect is not statistically significant.
-Average Causal Mediation Effect (ACME):
+Estimate: -0.0481 95% Confidence Interval: \[-0.1375, 0.04\] p-value: 0.30 Interpretation: The direct effect of the independent variable on the outcome is estimated to be -0.0481. However, since the confidence interval includes zero and the p-value is 0.30 (which is above the conventional significance threshold of 0.05), this direct effect is not statistically significant. Average Causal Mediation Effect (ACME):
 
-Estimate: -0.0152
-95% Confidence Interval: [-0.0404, 0.01]
-p-value: 0.19
-Interpretation: The indirect effect through the mediator is estimated at -0.0152. Similar to ADE, the confidence interval encompasses zero, and the p-value is 0.19, indicating that the mediation effect is not statistically significant.
-
+Estimate: -0.0152 95% Confidence Interval: \[-0.0404, 0.01\] p-value: 0.19 Interpretation: The indirect effect through the mediator is estimated at -0.0152. Similar to ADE, the confidence interval encompasses zero, and the p-value is 0.19, indicating that the mediation effect is not statistically significant.
 
 Total Effect:
 
-Estimate: -0.0633
-95% Confidence Interval: [-0.1569, 0.03]
-p-value: 0.17
-Interpretation: The overall effect of the independent variable on the outcome is estimated at -0.0633. Again, the confidence interval includes zero, and the p-value is 0.17, suggesting that the total effect is not statistically significant.
-Proportion Mediated:
+Estimate: -0.0633 95% Confidence Interval: \[-0.1569, 0.03\] p-value: 0.17 Interpretation: The overall effect of the independent variable on the outcome is estimated at -0.0633. Again, the confidence interval includes zero, and the p-value is 0.17, suggesting that the total effect is not statistically significant. Proportion Mediated:
 
-Estimate: 0.2399
-95% Confidence Interval: [-1.5375, 2.99]
-p-value: 0.29
-Interpretation: Approximately 23.99% of the total effect is mediated by the intermediary variable. However, the wide confidence interval, which spans from negative to positive values, and the p-value of 0.29 indicate that this proportion is not statistically significant.
-
-
-
+Estimate: 0.2399 95% Confidence Interval: \[-1.5375, 2.99\] p-value: 0.29 Interpretation: Approximately 23.99% of the total effect is mediated by the intermediary variable. However, the wide confidence interval, which spans from negative to positive values, and the p-value of 0.29 indicate that this proportion is not statistically significant.
 
 Looking at a plot might help intepret these better. If the horizontal line (the confidence interval) intersects the vertical line (0), then the effect is not significant.
-
 
 ```{r}
 
@@ -1889,20 +1732,15 @@ plot(mediation)
 
 ```
 
-
-
-
 # Chapter 6 - Introduction to Structural Equation Modeling (SEM) in R
 
 Structural Equation Modeling (SEM) is a good statistical method that can be used to examine complex relationships among variables. Briefly, SEM integrates elements of factor analysis and multiple regression and thus enables us to test and estimate relationships between observed (measured) variables and latent (unobserved) constructs. It is commonly used across various fields, including psychology, social sciences, and education, to model theoretical frameworks and validate hypotheses.
 
 SEM is flexible and can handle complex models, such as those involving mediation, moderation, or hierarchical structures. Unlike traditional regression models, SEM allows for simultaneous analysis of many response and predictor variables and thus useful for testing comprehensive, theory-driven questions.
 
-
 There are many open-source packages for SEM, both in and outside of R, such as lavaan, OpenMX, and sem. In this tutorial, we will use the **lavaan** package because its widely used for SEM in R. The **lavaan** package is user-friendly and the syntax mirrors the theoretical models researchers aim to test.
 
 Here, we will consider models in which all variables are observed, as well as models with latent variables. The first is sometimes called ‘path analysis’, whereas the latter is sometimes called a ‘measurement model.’
-
 
 ### Using Lavaan package
 
@@ -1911,8 +1749,6 @@ Like I said earlier, SEM is essentially an advanced extension of regression anal
 let's begin with a simple illustration of how SEM can replicate a basic single-predictor, single-outcome regression model using a path diagram. For this demonstration, we can use the Boston housing dataset from the 1970 census (of course you can use other data), which includes variables like crime rates, pollution levels, and the age of buildings. This dataset is ideal for regression analysis because it features many interrelated predictors.
 
 We will fit the same regression models (using the **lavaan** package), similar to how we do that via the `lm()` function in R. The syntax is straightforward- so it should be relatively easy before moving into more complex SEM models.
-
-
 
 ```{r}
 
@@ -1949,9 +1785,7 @@ summary(mod_lav)
 
 ```
 
-
 We can also compare that with the "lm" function
-
 
 ```{r}
 
@@ -1959,14 +1793,11 @@ summary(lm(cmedv ~ log_crim, df_boston))
 
 ```
 
-
 The regression coefficient is quite similar to the result from lavaan! However, you may notice that the **lavaan** output does not include an intercept. This difference is a key feature of basic SEM: it primarily emphasizes the covariance structure of the data rather than the mean structure. While it's possible to incorporate means into SEM analysis, this is usually done only when it aligns with specific research questions. For instance, one might explore whether there are mean differences in a latent depression factor between males and females.
-
 
 ### Including the Mean Structure
 
 To include the mean (intercept) in the model, we can instruct **lavaan** to account for it by setting `meanstructure = TRUE`:
-
 
 ```{r}
 
@@ -1975,11 +1806,9 @@ summary(mod_lav_intercept)
 
 ```
 
-
 ### Examining Model Parameters
 
 It's also good to check the 'parameter' table in **lavaan**. This table gives important overview of the model parameters, and gives us idea of which ones are free (i.e., need to be estimated) and which were explicitly specified by you in the model syntax.
-
 
 ```{r}
 
@@ -1991,7 +1820,6 @@ From the table above, 'user' column represent parameters that you have explicitl
 
 Additionally, **lavaan** allows us to obtain standardized estimates. Standardization in SEM can be a bit complicated, as you can choose to standardize based on the latent variables only (`std.lv`) or on both observed and latent variables (`std.all`). The latter option, `std.all`, is the most commonly reported in SEM research publications.
 
-
 ### Standardized estimates
 
 ```{r}
@@ -1999,8 +1827,6 @@ Additionally, **lavaan** allows us to obtain standardized estimates. Standardiza
 standardizedSolution(mod_lav, type="std.all")
 
 ```
-
-
 
 ## Path Analysis with Housing Data
 
@@ -2030,7 +1856,6 @@ semPlot::semPaths(mod_lav2, what='std', nCharNodes=6, sizeMan=10,
 
 *Note here, we used the handy semPaths function from semPlot.*
 
-
 To view just the model output like a normal regression text
 
 ```{r}
@@ -2039,24 +1864,19 @@ summary(mod_lav2)
 
 ```
 
-
 **Observations**
 
 Here are a few important points to consider:
 
-1. A warning indicates that "some observed variances are (at least) a factor 1000 times larger than others." This issue, known as ill-conditioning, suggests substantial differences in the scale of variables.
+1.  A warning indicates that "some observed variances are (at least) a factor 1000 times larger than others." This issue, known as ill-conditioning, suggests substantial differences in the scale of variables.
 
-2. The hypotheses appear to be well-supported by the model.
+2.  The hypotheses appear to be well-supported by the model.
 
-3. The model's chi-square test is highly significant, indicating a poor overall fit for the model.
-
-
-
+3.  The model's chi-square test is highly significant, indicating a poor overall fit for the model.
 
 ### Ill-Conditioning
 
 When the variances of variables in a model differ significantly—often by several orders of magnitude—it can create challenges for parameter estimation. Considering the earlier warning, we can investigate this further.
-
 
 ```{r}
 
@@ -2064,10 +1884,7 @@ varTable(mod_lav2)
 
 ```
 
-
-
 It seems that the scale of `nox` is significantly smaller than the other predictors, likely because it’s measured in parts per 10 million. To address this, we can rescale the variable by multiplying it by a constant. As you probably know, this adjustment doesn’t affect the model’s fit or interpretation, but you just have to keep track of the new units. If needed, the original units can be restored by dividing the parameter estimate by the same constant used for rescaling.
-
 
 ```{r}
 df_boston <- df_boston %>% mutate(nox = nox*100) #parts per 100,000 not 10 million
@@ -2076,18 +1893,15 @@ summary(mod_lav2)
 
 ```
 
-
 ### Evaluating Model Fit
 
 To obtain a more comprehensive set of global fit indices in the **lavaan** summary output, you can enable this by setting `fit.measures = TRUE`.
-
 
 ```{r}
 
 summary(mod_lav2, fit.measures=TRUE)
 
 ```
-
 
 Also, we can get the fit measures (including additional statistics) using fitmeasures():
 
@@ -2097,10 +1911,7 @@ fitmeasures(mod_lav2)
 
 ```
 
-
 From the table above, we can see the results are quite poor: the CFI falls well below the acceptable threshold of 0.95 (and even 0.9), while the RMSEA exceeds the 0.08 cutoff typically considered to indicate an adequate fit.
-
-
 
 ### Model Diagnostics
 
@@ -2110,9 +1921,7 @@ In SEM, the primary goal is to assess whether a theoretically derived model prov
 
 Formally, the objective is to develop a model where the model-implied covariance matrix closely matches the sample (observed) covariance matrix:
 
-\[
-S_{XX} \approx \Sigma(\hat{\theta})
-\]
+$$ S_{XX} \approx \Sigma(\hat{\theta}) $$
 
 Using **lavaan**, we can extract these matrices to further investigate potential areas of model misfit.
 
@@ -2124,11 +1933,7 @@ fitted(mod_lav2)
 
 ```
 
-
-
 It might be more intuitive to interpret the results in terms of correlations (standardized units). In other words, what are the model-implied correlations among the variables? The **inspect** function in **lavaan** allows us to access various details about the model, including these correlations:
-
-
 
 ```{r}
 
@@ -2136,9 +1941,7 @@ inspect(mod_lav2, what="cor.all")
 
 ```
 
-
 Can we compare this to the observed correlations?
-
 
 ```{r}
 
@@ -2148,15 +1951,13 @@ lavCor(mod_lav2)
 
 ```
 
+Examining the (mis)fit in bivariate relationships can be useful By working with residuals in correlational units, we have more perspective compared to unstandardized covariances. These residuals represent the difference between the observed and model-implied matrices calculated earlier.
 
+-   **Large positive residuals**: Indicate that the model underestimates the correlation between variables.
 
-Examining the (mis)fit in bivariate relationships can be useful By working with residuals in correlational units, we have more perspective compared to unstandardized covariances. These residuals represent the difference between the observed and model-implied matrices calculated earlier. 
+-   **Large negative residuals**: Suggest that the model overestimates the correlation.
 
-- **Large positive residuals**: Indicate that the model underestimates the correlation between variables.  
-
-- **Large negative residuals**: Suggest that the model overestimates the correlation.
-
-- Typically, residual values with magnitudes greater than |r > 0.1| warrant further investigation.
+-   Typically, residual values with magnitudes greater than \|r \> 0.1\| warrant further investigation.
 
 ```{r}
 
@@ -2164,10 +1965,7 @@ resid(mod_lav2, "cor")
 
 ```
 
-
-
-The model substantially underestimates the relationship between `nox` and `log_crim`. 
-
+The model substantially underestimates the relationship between `nox` and `log_crim`.
 
 ### Modification Indices
 
@@ -2180,11 +1978,9 @@ Here's the code to inspect the modification indices:
 modificationindices(mod_lav2, minimum.value = 20)
 ```
 
-
-From the table above, the results indicate that allowing `log_crim` to predict `nox` would greatly improve the model fit. However, it’s essential to evaluate whether this adjustment aligns with the theoretical framework, as theoretical validity often outweighs statistical considerations. 
+From the table above, the results indicate that allowing `log_crim` to predict `nox` would greatly improve the model fit. However, it’s essential to evaluate whether this adjustment aligns with the theoretical framework, as theoretical validity often outweighs statistical considerations.
 
 For the sake of this tutorial, we’ll just proceed by freeing this path to estimate it directly.
-
 
 ```{r}
 
@@ -2197,8 +1993,7 @@ summary(mod_lav3, fit.measures = TRUE)
 
 ```
 
-
-The updated model shows a significant improvement in fit. We can see a strong positive association between crime and `nox` levels that was previously overlooked. This suggests that the relationship between crime and home prices is partially mediated by crime's influence on pollution levels. 
+The updated model shows a significant improvement in fit. We can see a strong positive association between crime and `nox` levels that was previously overlooked. This suggests that the relationship between crime and home prices is partially mediated by crime's influence on pollution levels.
 
 In contrast, the proximity of homes to highways seems to affect home prices entirely through its impact on pollution levels. This conclusion is supported by the lack of a significant modification index for a direct path from highway proximity to home prices.
 
@@ -2215,21 +2010,19 @@ semPlot::semPaths(mod_lav3,
          fade = FALSE)
 ```
 
-
-
 ### Testing Mediation Effects
 
 When exploring mediation within an SEM framework, we can explicitly test indirect effects and use appropriate significance tests to ensure reliable p-values. Ideally, mediation is tested through the product of the paths that define the mediational relationship.
 
 In this case, we have two mediation chains:
 
-1. `rad → nox → cmedv`  
-2. `log_crim → nox → cmedv`
+1.  `rad → nox → cmedv`\
+2.  `log_crim → nox → cmedv`
 
 To test these indirect effects, we can define new parameters in the model as the product of the individual paths. This is achieved using the `:=` operator, which specifies the defined parameters without introducing additional free parameters. To identify which paths to multiply, we use parameter labels (`a1`, `a2`, `b1`) to indicate the respective paths:
 
-- `a1` and `a2` represent the paths from predictors (`rad` and `log_crim`) to the mediator (`nox`).
-- `b1` represents the path from the mediator (`nox`) to the outcome (`cmedv`).
+-   `a1` and `a2` represent the paths from predictors (`rad` and `log_crim`) to the mediator (`nox`).
+-   `b1` represents the path from the mediator (`nox`) to the outcome (`cmedv`).
 
 Here’s the updated model:
 
@@ -2249,17 +2042,11 @@ mod_lav4 <- sem(m_update, df_boston)
 summary(mod_lav4)
 ```
 
-Just to recap, 
-1. The `:=` operator allows us to calculate indirect effects as a function of existing parameters without changing the number of free parameters.
-2. `i_1` and `i_2` capture the mediational effects for the two specified pathways.
-3. The model output will include estimates and significance tests for the indirect effects, to confirm whether mediation is present.
-
-
+Just to recap, 1. The `:=` operator allows us to calculate indirect effects as a function of existing parameters without changing the number of free parameters. 2. `i_1` and `i_2` capture the mediational effects for the two specified pathways. 3. The model output will include estimates and significance tests for the indirect effects, to confirm whether mediation is present.
 
 While the results looks good, it’s worth noting that this approach has limitations. Specifically, if the sampling distribution of the product of indirect paths is not normal, it can lead to inaccurate results. In this case, Bootstrapping is another good alternative to address this, as it doesn’t rely on strict assumptions about the distribution of the indirect effect. By resampling the data multiple times, we can estimate the standard errors of the parameters in a more reliable way. In **lavaan**, this can be implemented using the `se = "bootstrap"` argument.
 
 By default, **lavaan** uses 1000 bootstrap samples, but you can adjust this number with the `bootstrap` argument.
-
 
 ```{r}
 
@@ -2269,8 +2056,6 @@ mod_lav4_boot <- sem(m_update, df_boston, se = "bootstrap")
 summary(mod_lav4_boot)
 
 ```
-
-
 
 ### Latent Variable Models in SEM
 
@@ -2282,11 +2067,9 @@ A classic example of this approach is the Holzinger-Swineford dataset, frequentl
 
 The CFA model for these 9 variables proposes the following structure:
 
-1. A **visual factor** measured by `x1`, `x2`, and `x3`.  
-2. A **textual factor** measured by `x4`, `x5`, and `x6`.  
-3. A **speed factor** measured by `x7`, `x8`, and `x9`.
-
-
+1.  A **visual factor** measured by `x1`, `x2`, and `x3`.\
+2.  A **textual factor** measured by `x4`, `x5`, and `x6`.\
+3.  A **speed factor** measured by `x7`, `x8`, and `x9`.
 
 **Defining a Factor Model**
 
@@ -2305,9 +2088,6 @@ latent_variable =~ indicator1 + indicator2 + indicator3
 ```
 
 This syntax specifies that each latent construct (e.g., `visual`, `textual`, `speed`) is inferred from the corresponding observed variables (`x1`, `x2`, `x3`, etc.). This makes it easy to model reflective latent variables in **lavaan**.
-
-
-
 
 **Understanding Typical CFA Output**
 
@@ -2331,7 +2111,6 @@ summary(fit, fit.measures = TRUE)
 
 Now we have a detailed summary of the model's parameter estimates and global fit indices and can assess the adequacy of the factor structure.
 
-
 **Modification Indices for CFA**
 
 To identify potential improvements to the CFA model, we can examine the modification indices. These indices suggest changes—such as freeing specific parameters—that could enhance the model fit.
@@ -2342,9 +2121,7 @@ The following command displays modification indices greater than a specified thr
 modificationIndices(fit, minimum.value = 10)
 ```
 
-
 The table shows that `x9` might load onto the visual factor, or that `x7` and `x9` could share a unique residual correlation. While this poses theoretical concerns, for this tutorial, let's just test an adjusted model. In **lavaan**, the `~~` operator is used to define residual variances or covariances within the model.
-
 
 ```{r}
 
@@ -2359,7 +2136,6 @@ fit2 <- cfa(model2, data=HolzingerSwineford1939)
 summary(fit2, fit.measures=TRUE)
 
 ```
-
 
 The updated model still doesn’t fit much well. We can revisit the modification indices to explore additional adjustments:
 
@@ -2376,8 +2152,6 @@ anova(fit, fit2)
 ```
 
 The `anova` function performs this comparison, with the LRT degrees of freedom equal to the difference in the number of free parameters between the models (1 in this case). This test evaluates whether the additional parameter in the more complex model significantly improves model fit.
-
-
 
 ### Structural Model
 
@@ -2415,22 +2189,16 @@ semPlot::semPaths(fit_structural)
 
 We can now see the extension of CFA by adding structural paths. This enable us to evaluate how `grade` influences each of the latent intelligence factors while maintaining the integrity of the measurement model.
 
-
 As expected, students in higher grades tend to achieve higher scores on the latent intelligence factors.
-
-
-
 
 ### Choosing Estimators
 
 **lavaan** provides several algorithms for parameter estimation, depending on the nature of your data:
 
-- **ML (Maximum Likelihood)**: The default for continuous data.
-- **WLS (Weighted Least Squares)**: The default for data that includes categorical variables.
+-   **ML (Maximum Likelihood)**: The default for continuous data.
+-   **WLS (Weighted Least Squares)**: The default for data that includes categorical variables.
 
-Robust variants of these estimators, such as **MLR** and **WLSMV**, adjust the model to handle non-normality and other complexities like clustering. These adjustments are particularly useful because they improve the accuracy of global chi-square tests, standard errors, and significance tests. For most scenarios:
-- **MLR** is a popular choice for continuous data.
-- **WLSMV** is commonly used for categorical data.
+Robust variants of these estimators, such as **MLR** and **WLSMV**, adjust the model to handle non-normality and other complexities like clustering. These adjustments are particularly useful because they improve the accuracy of global chi-square tests, standard errors, and significance tests. For most scenarios: - **MLR** is a popular choice for continuous data. - **WLSMV** is commonly used for categorical data.
 
 We can specify the estimator in **lavaan** using the `estimator` argument:
 
@@ -2451,13 +2219,9 @@ summary(fit_mlr, fit.measures = TRUE)
 
 The output now includes a column of **robust global fit indices**- that provides more reliable assessments under non-normal conditions. Also, the standard errors are computed using a Huber-White sandwich estimator that are resistant to issues like non-normality and clustering.
 
-
-
-
-
 ### Handling Missing Data in SEM
 
-By default, **lavaan** performs listwise deletion for missing data, meaning that any individual with missing values is excluded from the analysis. This approach can lead to significant data loss and potentially biased results. 
+By default, **lavaan** performs listwise deletion for missing data, meaning that any individual with missing values is excluded from the analysis. This approach can lead to significant data loss and potentially biased results.
 
 An alternative approach is to use **Full-Information Maximum Likelihood (FIML)**, which assumes data are *missing at random* (MAR). Under MAR, missingness on a variable can be related to other observed variables but not to the variable itself. FIML leverages all available data to estimate parameters without discarding cases, making it a preferred approach for handling missingness in SEM.
 
@@ -2466,10 +2230,8 @@ In **lavaan**, we can enable FIML by adding `missing = "ml"` or `fiml` to your m
 Let's fit the model with the default
 
 **Listwise Deletion (Default Behavior)**:
- 
+
 But before then, we can quickly generate some missing data for the HolzingerSwineford1939
-
-
 
 The missing values for `x5` are dependent on `x1`, with the lowest 20% of `x1` having missing `x5` values.
 
@@ -2481,9 +2243,7 @@ data_miss$x5 <- ifelse(data_miss$x1 <= quantile(data_miss$x1, .2),
 
 ```
 
-
-
-Also, the missing values for `x9` are associated with `age`, where the youngest 10% of the age group have missing values for `x9`. 
+Also, the missing values for `x9` are associated with `age`, where the youngest 10% of the age group have missing values for `x9`.
 
 ```{r}
 
@@ -2508,9 +2268,7 @@ Count the missing value for each variable
 colSums(na.eval)
 ```
 
-
 As we can see, we have 65 missing values on x5 and 33 on x9
-
 
 Now we can fit the model
 
@@ -2539,17 +2297,12 @@ fit.fiml <- lavaan::sem(model4,
 summary(fit.fiml, fit.measures = TRUE)   
    
 ```
-  
+
 Now, you can look at the number of obs and the missing patterns- you can see the difference with the default behavior?
 
 Essentially, FIML uses all available data, resulting in no loss of sample size and a more complete analysis.
 
-
 Note that FIML is available only for maximum likelihood (ML)-based estimators. For the WLS family of estimators (e.g., WLS or WLSMV), which are not ML estimators, FIML is not supported. Instead, you can use `missing = "pairwise"`, which bases estimates on pairwise available data. However, this approach is generally less robust and may lead to less accurate parameter estimates. So, my suggestion is that for models with missing data, using FIML (`missing = "ml" or "fiml"`) is typically the most reliable method in **lavaan** when the data meet the MAR assumption. While listwise deletion is the default, it should be avoided when possible due to its tendency to discard valuable data and introduce bias.
-
-
-
-
 
 ```{r}
 #| echo: false
