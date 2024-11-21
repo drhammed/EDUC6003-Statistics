@@ -1738,7 +1738,7 @@ Structural Equation Modeling (SEM) is a good statistical method that can be used
 
 SEM is flexible and can handle complex models, such as those involving mediation, moderation, or hierarchical structures. Unlike traditional regression models, SEM allows for simultaneous analysis of many response and predictor variables and thus useful for testing comprehensive, theory-driven questions.
 
-There are many open-source packages for SEM, both in and outside of R, such as lavaan, OpenMX, and sem. In this tutorial, we will use the **lavaan** package because its widely used for SEM in R. The **lavaan** package is user-friendly and the syntax mirrors the theoretical models researchers aim to test.
+There are many open-source packages for SEM, both in and outside of R, such as lavaan, OpenMX, and sem. In this tutorial, we will use the **lavaan** package because its widely used for SEM in R. The **lavaan** package is user-friendly and the syntax mirrors the (theoretical) models you may aim to test.
 
 Here, we will consider models in which all variables are observed, as well as models with latent variables. The first is sometimes called ‘path analysis’, whereas the latter is sometimes called a ‘measurement model.’
 
